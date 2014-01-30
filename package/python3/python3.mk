@@ -52,6 +52,10 @@ HOST_PYTHON3_DEPENDENCIES = host-expat host-zlib
 
 PYTHON3_INSTALL_STAGING = YES
 
+ifeq ($(BR2_PACKAGE_PYTHON3_DEBUG),y)
+PYTHON3_CONF_OPT += --with-pydebug
+endif
+
 ifeq ($(BR2_PACKAGE_PYTHON3_READLINE),y)
 PYTHON3_DEPENDENCIES += readline
 endif

@@ -31,6 +31,11 @@ config BR2_PACKAGE_PYTHON3_PY_PYC
 
 endchoice
 
+config BR2_PACKAGE_PYTHON3_DEBUG
+	bool "python3_build_with_pydebug"
+	help
+	  Compile python3 with the --with-pydebug option
+
 menu "core python3 modules"
 
 comment "The following modules are unusual or require extra libraries"
