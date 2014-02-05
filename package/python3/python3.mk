@@ -52,10 +52,10 @@ HOST_PYTHON3_DEPENDENCIES = host-expat host-zlib
 
 PYTHON3_INSTALL_STAGING = YES
 
-PY3_CONFIG_DIR = config-3.3m
+#PY3_CONFIG_DIR = config-3.3m
 ifeq ($(BR2_PACKAGE_PYTHON3_DEBUG),y)
 PYTHON3_CONF_OPT += --with-pydebug
-PY3_CONFIG_DIR = config-3.3dm
+#PY3_CONFIG_DIR = config-3.3dm
 endif
 
 ifeq ($(BR2_PACKAGE_PYTHON3_READLINE),y)
@@ -134,7 +134,7 @@ PYTHON3_MAKE_ENV = \
 # trouble for cross compilation
 define PYTHON3_FIXUP_LIBDIR
 	$(SED) 's|^LIBDIR=.*|LIBDIR= $(STAGING_DIR)/usr/lib|' \
-	   $(STAGING_DIR)/usr/lib/python$(PYTHON3_VERSION_MAJOR)/$(PY3_CONFIG_DIR)/Makefile
+	   $(STAGING_DIR)/usr/lib/python$(PYTHON3_VERSION_MAJOR)/config-3.3m/Makefile
 endef
 
 PYTHON3_POST_INSTALL_STAGING_HOOKS += PYTHON3_FIXUP_LIBDIR
@@ -148,7 +148,7 @@ define PYTHON3_REMOVE_USELESS_FILES
 	rm -f $(TARGET_DIR)/usr/bin/python$(PYTHON3_VERSION_MAJOR)m-config
 	rm -f $(TARGET_DIR)/usr/bin/python3-config
 	rm -f $(TARGET_DIR)/usr/bin/smtpd.py.3
-	for i in `find $(TARGET_DIR)/usr/lib/python$(PYTHON3_VERSION_MAJOR)/$(PY3_CONFIG_DIR)/ \
+	for i in `find $(TARGET_DIR)/usr/lib/python$(PYTHON3_VERSION_MAJOR)/config-3.3m/ \
 		-type f -not -name pyconfig.h -a -not -name Makefile` ; do \
 		rm -f $$i ; \
 	done
