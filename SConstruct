@@ -62,6 +62,9 @@ env.Command('.config', 'defconfig', "make defconfig; make defconfig")
 # file that should always exist as a target so that any post build actions can
 # be forced to run after this command, and the single listed source is used
 # similarly.
-# TODO: implement clean builds
 # TODO: Add a way to pass in make target lists such as "python3-dirclean all"
-env.Command('output/target/bin/busybox', '.config', 'make')
+filesystem = env.Command('output/target/bin/busybox', '.config', 'make')
+env.AlwaysBuild(filesystem)
+env.Precious(filesystem)
+env.Clean(filesystem, 'output')
+
