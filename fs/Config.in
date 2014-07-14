@@ -1,5 +1,12 @@
 menu "Filesystem images"
 
+config BR2_TARGET_ROOTFS_DEPS
+	bool "build filesystem creation dependencies"
+	help
+	  This does not actually build a filesytem image, but creates
+	  several dependencies to make it easier for other scripts to
+	  create a filesystem image.
+
 source "fs/cloop/Config.in"
 source "fs/cpio/Config.in"
 source "fs/cramfs/Config.in"

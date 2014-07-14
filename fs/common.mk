@@ -59,11 +59,15 @@ endif
 endif
 	printf '$(subst $(sep),\n,$(PACKAGES_USERS))' > $(USERS_TABLE)
 	$(TOPDIR)/support/scripts/mkusers $(USERS_TABLE) $(TARGET_DIR) >> $(FAKEROOT_SCRIPT)
+ifeq ($(2),DEPS)
+	touch $$(BINARIES_DIR)/rootfs.$(1)
+else
 	echo "$$(ROOTFS_$(2)_CMD)" >> $$(FAKEROOT_SCRIPT)
 	chmod a+x $$(FAKEROOT_SCRIPT)
 	$$(HOST_DIR)/usr/bin/fakeroot -- $$(FAKEROOT_SCRIPT)
-	cp support/misc/target-dir-warning.txt $$(TARGET_DIR_WARNING_FILE)
 	-@rm -f $$(FAKEROOT_SCRIPT) $$(FULL_DEVICE_TABLE)
+	cp support/misc/target-dir-warning.txt $$(TARGET_DIR_WARNING_FILE)
+endif
 	$$(foreach hook,$$(ROOTFS_$(2)_POST_GEN_HOOKS),$$(call $$(hook))$$(sep))
 ifeq ($$(BR2_TARGET_ROOTFS_$(2)_GZIP),y)
 	gzip -9 -c $$@ > $$@.gz
@@ -94,5 +98,7 @@ endef
 define ROOTFS_TARGET
 $(call ROOTFS_TARGET_INTERNAL,$(1),$(call UPPERCASE,$(1)))
 endef
+
+$(eval $(call ROOTFS_TARGET_INTERNAL,dummy,DEPS))
 
 include fs/*/*.mk
