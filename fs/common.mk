@@ -99,6 +99,10 @@ define ROOTFS_TARGET
 $(call ROOTFS_TARGET_INTERNAL,$(1),$(call UPPERCASE,$(1)))
 endef
 
+ifeq ($(BR2_TARGET_ROOTFS_DEPS_UBIFS),y)
+ROOTFS_DEPS_DEPENDENCIES += host-mtd
+endif
+
 $(eval $(call ROOTFS_TARGET_INTERNAL,dummy,DEPS))
 
 include fs/*/*.mk

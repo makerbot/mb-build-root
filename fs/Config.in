@@ -7,6 +7,15 @@ config BR2_TARGET_ROOTFS_DEPS
 	  several dependencies to make it easier for other scripts to
 	  create a filesystem image.
 
+if BR2_TARGET_ROOTFS_DEPS
+
+config BR2_TARGET_ROOTFS_DEPS_UBIFS
+	bool "ubifs creation dependencies"
+    help
+      All dependencies needed to build ubifs images
+
+endif
+
 source "fs/cloop/Config.in"
 source "fs/cpio/Config.in"
 source "fs/cramfs/Config.in"
