@@ -1,6 +1,7 @@
 import sys
 import os
 import subprocess
+import platform
 
 # SCons hack to ignore unknown targets
 import SCons.Script
@@ -26,6 +27,15 @@ baseDir = os.path.abspath(str(Dir('#')))
 # TODO: change this to work with Toolchain-Release
 toolchainDir = os.path.abspath(os.path.join(baseDir, '../../toolchain'))
 
+def _get_linaro():
+    """Util func to select correct cross-linaro folder based on host OS/Arch"""
+    cl = 'cross-linaro'
+    if platform.system() == 'Darwin':
+        cl += '-osx'
+    elif platform.architecture()[0] == '64bit':  # assumes linux if not osx
+        cl += '64'
+    return cl
+
 def patch_defconfig(source, target, env):
     """
     build-root needs a few absolute paths in its defconfig file, so we
@@ -37,7 +47,7 @@ def patch_defconfig(source, target, env):
     # standard config process, exporting a defconfig and copying it to
     # mbdefconfig
     config_override = {
-        'BR2_TOOLCHAIN_EXTERNAL_PATH': os.path.join(toolchainDir, 'cross-linaro'),
+        'BR2_TOOLCHAIN_EXTERNAL_PATH': os.path.join(toolchainDir, _get_linaro()),
         'BR2_PACKAGE_BUSYBOX_CONFIG': os.path.join(baseDir, 'busybox.mbconfig'),
     }
 
