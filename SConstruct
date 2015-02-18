@@ -2,6 +2,10 @@ import sys
 import os
 import subprocess
 
+# Get the debug flag value before we clear options
+AddOption('--bwdebug', dest='bwdebug', action='store_true')
+debug = GetOption('bwdebug')
+
 # SCons hack to ignore unknown targets
 import SCons.Script
 SCons.Script.BUILD_TARGETS = ['.']
@@ -17,6 +21,7 @@ parser.rargs = []
 os.environ.pop('CPATH', None)
 
 env = Environment(ENV = os.environ)
+env['DEBUG'] = debug
 
 # Mostly this file should just call make.  We use scons to determine
 # determine if we need to call make defconfig
@@ -41,8 +46,8 @@ def patch_defconfig(source, target, env):
         'BR2_PACKAGE_BUSYBOX_CONFIG': os.path.join(baseDir, 'busybox.mbconfig'),
     }
 
-    with open(str(source[0]), 'r') as src:
-        with open(str(target[0]), 'w') as dst:
+    with open(str(target[0]), 'w') as dst:
+        with open(str(source[0]), 'r') as src:
             for line in src:
                 var = line.split('=')[0]
                 if var in config_override:
@@ -50,7 +55,12 @@ def patch_defconfig(source, target, env):
                 else:
                     dst.write(line)
 
-env.Command('defconfig', 'mbdefconfig', patch_defconfig)
+        # Add debug options to the config for debug builds
+        if env['DEBUG']:
+            with open(str(source[1]), 'r') as src:
+                dst.write(src.read())
+
+env.Command('defconfig', ['mbdefconfig', 'mbdefconfig.debug'], patch_defconfig)
 
 # Build root seems to have a bug where our defconfig file is ignored if this
 # is being run for the first time after a clean checkout.  For now the
