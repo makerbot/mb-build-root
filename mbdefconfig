@@ -1,4 +1,5 @@
 BR2_arm=y
+BR2_ENABLE_DEBUG=y
 BR2_TOOLCHAIN_EXTERNAL=y
 BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
 BR2_TOOLCHAIN_EXTERNAL_PATH="/home/seth/code/Birdwing-toolchain/toolchain/cross-linaro"
