@@ -28,8 +28,7 @@ env['DEBUG'] = debug
 
 # TODO: does build-root _really_ need absolute paths?
 baseDir = os.path.abspath(str(Dir('#')))
-# TODO: change this to work with Toolchain-Release
-toolchainDir = os.path.abspath(os.path.join(baseDir, '../../toolchain'))
+toolchainDir = os.path.abspath(os.path.join(baseDir, '..'))
 
 def patch_defconfig(source, target, env):
     """
@@ -42,7 +41,9 @@ def patch_defconfig(source, target, env):
     # standard config process, exporting a defconfig and copying it to
     # mbdefconfig
     config_override = {
-        'BR2_TOOLCHAIN_EXTERNAL_PATH': os.path.join(toolchainDir, 'cross-linaro'),
+        'BR2_TOOLCHAIN_EXTERNAL_PATH': os.path.join(
+            toolchainDir, 'linaro-linux-gnu',
+            'gcc-linaro-4.9-2015.02-3-x86_64_arm-linux-gnueabihf'),
         'BR2_PACKAGE_BUSYBOX_CONFIG': os.path.join(baseDir, 'busybox.mbconfig'),
     }
 
@@ -73,7 +74,7 @@ env.Command('.config', 'defconfig', "make defconfig; make defconfig")
 # be forced to run after this command, and the single listed source is used
 # similarly.
 # TODO: Add a way to pass in make target lists such as "python3-dirclean all"
-filesystem = env.Command('output/target/bin/busybox', '.config', 'make')
+filesystem = env.Command('output/target/bin/busybox', '.config', 'make -j8')
 env.AlwaysBuild(filesystem)
 env.Precious(filesystem)
 env.Clean(filesystem, 'output')
