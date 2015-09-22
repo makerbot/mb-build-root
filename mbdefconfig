@@ -9,7 +9,7 @@ BR2_TOOLCHAIN_EXTERNAL_CUSTOM_PREFIX="arm-linux-gnueabihf"
 BR2_TOOLCHAIN_EXTERNAL_CUSTOM_GLIBC=y
 BR2_TOOLCHAIN_EXTERNAL_CXX=y
 BR2_TARGET_GENERIC_HOSTNAME="morepork"
-BR2_TARGET_GENERIC_ISSUE="MakerBot terminal for MakerBot birdwing presented by MakerBot"
+BR2_TARGET_GENERIC_ISSUE="You can make things with a MakerBot, oh yes, oh yes you can!!!"
 BR2_ROOTFS_DEVICE_CREATION_DYNAMIC_UDEV=y
 # BR2_TARGET_GENERIC_REMOUNT_ROOTFS_RW is not set
 BR2_PACKAGE_BUSYBOX_CONFIG="/home/seth/code/Birdwing-toolchain/BuildFS/build-root/busybox.mbconfig"
