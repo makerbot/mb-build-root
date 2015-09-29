@@ -71,8 +71,77 @@ def build(debug=False, num_cores=4):
     # Actually build
     run_cmd(['make', '-j', str(num_cores)])
 
+def test_symlink(link, rel_dir):
+    """
+    Check if the relative symlink leaves rel_dir.
+
+    For example ../.. leaves foo but not foo/bar.  ../../baz also leaves
+    foo but not foo/bar.
+    """
+    path = os.path.join(rel_dir, link)
+    return os.path.abspath('/x/'+path) != '/x'+os.path.abspath('/'+path)
+
+def install_tree(src_path, install_path, manifest_file):
+    """
+    Recursively install the folder src_path as the folder install_path
+
+    This will write the full install path of every file, symlink, and
+    empty directory to the open file object manifest_file, mimicing
+    the behavior of cmake when writing install_manifest.txt.  The
+    copying behavior mimics "cp -ar" as closely as is possible without
+    root permissions.  However, when copying symlinks, we specifically
+    disallow absolute links and relative links that leave the src_path.
+    """
+    for dir, subdirs, files in os.walk(src_path):
+        rel_dir = os.path.relpath(dir, src_path)
+        install_dir = os.path.abspath(os.path.join(install_path, rel_dir))
+        if not os.path.exists(install_dir):
+            os.makedirs(install_dir)
+            shutil.copystat(dir, install_dir)
+        if not files and not subdirs:
+            manifest_file.write(install_dir + '\n')
+        for file in files:
+            # This is a bad way in general to exclude a single file, but
+            # this is an uncommon enough name that it is probably okay.
+            if file == 'THIS_IS_NOT_YOUR_ROOT_FILESYSTEM':
+                continue
+            src_file = os.path.join(dir, file)
+            install_file = os.path.join(install_dir, file)
+            if os.path.islink(src_file):
+                linkto = os.readlink(src_file)
+                if os.path.isabs(linkto):
+                    raise Exception('Source %s links to absolute path %s' %
+                                    (src_file, linkto))
+                if test_symlink(linkto, rel_dir):
+                    raise Exception('Source %s links outside of copied tree' %
+                                    (src_file))
+                if os.path.lexists(install_file):
+                    os.remove(install_file)
+                os.symlink(linkto, install_file)
+            else:
+                if os.path.lexists(install_file):
+                    os.remove(install_file)
+                shutil.copy2(src_file, install_file)
+            manifest_file.write(install_file + '\n')
+
 def install(path):
-    pass
+    with open(os.path.join(this_dir, "install_manifest.txt"), 'w') as f:
+        # Install the actual root filesystem to the location where
+        # our bundling logic looks for the root filesystem
+        rootfs_source = os.path.join(this_dir, "output", "target")
+        rootfs_target = os.path.join(path, "rootfs")
+        print("Installing rootfs to %s" % rootfs_target)
+        install_tree(rootfs_source, rootfs_target, f)
+
+        # Also install the staging directory, which contains header
+        # files for all of the libraries we have built.
+        # TODO: This also installs a bunch of huge unnecessary .a files
+        staging_source = os.path.join(this_dir, "output", "staging")
+        staging_target = os.path.join(path, "staging")
+        print("Installing staging to %s" % staging_target)
+        install_tree(staging_source, staging_target, f)
+
+        # TODO: Install some things from the host directory
 
 def clean():
     print("Removing output/")
