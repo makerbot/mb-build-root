@@ -81,6 +81,8 @@ def test_symlink(link, rel_dir):
     path = os.path.join(rel_dir, link)
     return os.path.abspath('/x/'+path) != '/x'+os.path.abspath('/'+path)
 
+
+
 def install_tree(src_path, install_path, manifest_file):
     """
     Recursively install the folder src_path as the folder install_path
@@ -92,6 +94,7 @@ def install_tree(src_path, install_path, manifest_file):
     root permissions.  However, when copying symlinks, we specifically
     disallow absolute links and relative links that leave the src_path.
     """
+    print("Installing %s as %s" % (src_path, install_path))
     for dir, subdirs, files in os.walk(src_path):
         rel_dir = os.path.relpath(dir, src_path)
         install_dir = os.path.abspath(os.path.join(install_path, rel_dir))
@@ -100,7 +103,7 @@ def install_tree(src_path, install_path, manifest_file):
             shutil.copystat(dir, install_dir)
         if not files and not subdirs:
             manifest_file.write(install_dir + '\n')
-        for file in files:
+        for file in files + subdirs:
             # This is a bad way in general to exclude a single file, but
             # this is an uncommon enough name that it is probably okay.
             if file == 'THIS_IS_NOT_YOUR_ROOT_FILESYSTEM':
@@ -118,30 +121,50 @@ def install_tree(src_path, install_path, manifest_file):
                 if os.path.lexists(install_file):
                     os.remove(install_file)
                 os.symlink(linkto, install_file)
-            else:
+            elif os.path.isfile(src_file):
                 if os.path.lexists(install_file):
                     os.remove(install_file)
                 shutil.copy2(src_file, install_file)
+            elif os.path.isdir(src_file):
+                continue
+            else:
+                raise Exception("Unhandled file type")
             manifest_file.write(install_file + '\n')
+
+def install_file(src_path, install_path, manifest_file):
+    """
+    Install a single regular file
+
+    Usage is otherwise the same as install_tree
+    """
+    print("Installing %s as %s" % (src_path, install_path))
+    install_dir = os.path.dirname(install_path)
+    if not os.path.exists(install_dir):
+        os.makedirs(install_dir)
+    if os.path.lexists(install_path):
+        os.remove(install_path)
+    shutil.copy2(src_path, install_path)
+    manifest_file.write(install_path + '\n')
 
 def install(path):
     with open(os.path.join(this_dir, "install_manifest.txt"), 'w') as f:
         # Install the actual root filesystem to the location where
         # our bundling logic looks for the root filesystem
-        rootfs_source = os.path.join(this_dir, "output", "target")
-        rootfs_target = os.path.join(path, "rootfs")
-        print("Installing rootfs to %s" % rootfs_target)
-        install_tree(rootfs_source, rootfs_target, f)
+        install_tree(os.path.join(this_dir, "output/target"),
+                     os.path.join(path, "rootfs"), f)
 
         # Also install the staging directory, which contains header
         # files for all of the libraries we have built.
         # TODO: This also installs a bunch of huge unnecessary .a files
-        staging_source = os.path.join(this_dir, "output", "staging")
-        staging_target = os.path.join(path, "staging")
-        print("Installing staging to %s" % staging_target)
-        install_tree(staging_source, staging_target, f)
+        install_tree(os.path.join(this_dir, "output/staging"),
+                     os.path.join(path, "staging"), f)
 
-        # TODO: Install some things from the host directory
+        # Needed things to package up the root filesystem
+        install_file(os.path.join(this_dir, "output/build/_device_table.txt"),
+                     os.path.join(path, "rootfs_util/_device_table.txt"), f)
+        install_file(os.path.join(this_dir, "output/host/usr/bin/makedevs"),
+                     os.path.join(path, "rootfs_util/makedevs"), f)
+
 
 def clean():
     print("Removing output/")
