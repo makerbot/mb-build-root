@@ -14,4 +14,4 @@
 *~
 *.pyc
 /defconfig
-.scons*
+/install_manifest.txt
