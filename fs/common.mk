@@ -95,7 +95,7 @@ endif
 	chmod a+x $$(FAKEROOT_SCRIPT)
 	PATH=$$(BR_PATH) $$(HOST_DIR)/usr/bin/fakeroot -- $$(FAKEROOT_SCRIPT)
 	$$(INSTALL) -m 0644 support/misc/target-dir-warning.txt $$(TARGET_DIR_WARNING_FILE)
-	-@rm -f $$(FAKEROOT_SCRIPT) $$(FULL_DEVICE_TABLE)
+	-@rm -f $$(FAKEROOT_SCRIPT)
 ifneq ($$(ROOTFS_$(2)_COMPRESS_CMD),)
 	PATH=$$(BR_PATH) $$(ROOTFS_$(2)_COMPRESS_CMD) $$@ > $$@$$(ROOTFS_$(2)_COMPRESS_EXT)
 endif
@@ -117,5 +117,7 @@ endef
 define ROOTFS_TARGET
 	$(call ROOTFS_TARGET_INTERNAL,$(1),$(call UPPERCASE,$(1)))
 endef
+
+$(eval $(call ROOTFS_TARGET_INTERNAL,dummy,DEPS))
 
 include $(sort $(wildcard fs/*/*.mk))

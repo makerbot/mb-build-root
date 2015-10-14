@@ -7,9 +7,6 @@ import subprocess
 # Set the build configuration here as <name>_defconfig
 config = 'mb_stardust_reva_defconfig'
 
-# We also need to specify a device tree to build
-dt = 'mb-stardust-reva.dtb'
-
 this_dir = os.path.realpath(os.path.dirname(__file__))
 
 def run_cmd(cmd):
@@ -59,14 +56,11 @@ def make_defconfig(debug=False):
 
 def build(debug=False, num_cores=4):
     # Just always write the defconfig
-    with open(os.path.join(this_dir, 'defconfig'), 'w') as f:
+    with open(os.path.join(this_dir, 'configs/mb_defconfig'), 'w') as f:
         f.write(make_defconfig(debug))
 
-    # Build root seems to have a bug where our defconfig file is
-    # ignored if this is being run for the first time after a clean
-    # checkout.  For now the workaround is to run it twice.
-    run_cmd(['make', 'defconfig'])
-    run_cmd(['make', 'defconfig'])
+    # Create the full configuration file
+    run_cmd(['make', 'mb_defconfig'])
 
     # Actually build
     run_cmd(['make', '-j', str(num_cores)])

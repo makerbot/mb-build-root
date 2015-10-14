@@ -54,7 +54,7 @@ endef
 
 # Avoid oopses with vipw/vigr, lack of $EDITOR and 'vi' command expectation
 define VIM_INSTALL_VI_SYMLINK
-	ln -sf /usr/bin/vim $(TARGET_DIR)/bin/vi
+	ln -sf ../usr/bin/vim $(TARGET_DIR)/bin/vi
 endef
 VIM_POST_INSTALL_TARGET_HOOKS += VIM_INSTALL_VI_SYMLINK
 

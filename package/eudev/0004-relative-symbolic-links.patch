@@ -1,0 +1,11 @@
+--- a/src/udev/Makefile.am
++++ b/src/udev/Makefile.am
+@@ -137,7 +137,7 @@
+ # install udevadm symlink in sbindir
+ install-exec-hook:
+ 	if test "$(bindir)" != "$(sbindir)"; then \
+-		$(LN_S) -n -f $(bindir)/udevadm $(DESTDIR)$(sbindir)/udevadm; \
++		$(LN_S) -n -f ..$(bindir)/udevadm $(DESTDIR)$(sbindir)/udevadm; \
+ 	fi
+ 
+ uninstall-hook:
