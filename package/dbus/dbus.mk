@@ -93,12 +93,12 @@ define DBUS_INSTALL_INIT_SYSV
 
 	mkdir -p $(TARGET_DIR)/var/lib
 	rm -rf $(TARGET_DIR)/var/lib/dbus
-	ln -sf /tmp/dbus $(TARGET_DIR)/var/lib/dbus
+	ln -sf ../../tmp/dbus $(TARGET_DIR)/var/lib/dbus
 endef
 
 define DBUS_INSTALL_INIT_SYSTEMD
 	mkdir -p $(TARGET_DIR)/var/lib/dbus
-	ln -sf /etc/machine-id $(TARGET_DIR)/var/lib/dbus/machine-id
+	ln -sf ../../../etc/machine-id $(TARGET_DIR)/var/lib/dbus/machine-id
 endef
 
 HOST_DBUS_DEPENDENCIES = host-pkgconf host-expat
