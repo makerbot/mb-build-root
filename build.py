@@ -65,18 +65,6 @@ def build(debug=False, num_cores=4):
     # Actually build
     run_cmd(['make', '-j', str(num_cores)])
 
-def test_symlink(link, rel_dir):
-    """
-    Check if the relative symlink leaves rel_dir.
-
-    For example ../.. leaves foo but not foo/bar.  ../../baz also leaves
-    foo but not foo/bar.
-    """
-    path = os.path.join(rel_dir, link)
-    return os.path.abspath('/x/'+path) != '/x'+os.path.abspath('/'+path)
-
-
-
 def install_tree(src_path, install_path, manifest_file):
     """
     Recursively install the folder src_path as the folder install_path
@@ -106,12 +94,6 @@ def install_tree(src_path, install_path, manifest_file):
             install_file = os.path.join(install_dir, file)
             if os.path.islink(src_file):
                 linkto = os.readlink(src_file)
-                if os.path.isabs(linkto):
-                    raise Exception('Source %s links to absolute path %s' %
-                                    (src_file, linkto))
-                if test_symlink(linkto, rel_dir):
-                    raise Exception('Source %s links outside of copied tree' %
-                                    (src_file))
                 if os.path.lexists(install_file):
                     os.remove(install_file)
                 os.symlink(linkto, install_file)
@@ -162,7 +144,9 @@ def install(path):
 
 def clean():
     print("Removing output/")
-    shutil.rmtree(os.path.join(this_dir, 'output'))
+    path = os.path.join(this_dir, 'output')
+    if os.path.exists(path):
+        shutil.rmtree(path)
 
 if 'TR_BUILD' in os.environ:
     # Convert boolean args back to booleans
