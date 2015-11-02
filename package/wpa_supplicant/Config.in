@@ -54,4 +54,9 @@ config BR2_PACKAGE_WPA_SUPPLICANT_WPS
 	help
 	  Enable support for Wi-Fi Protected Setup (WPS)
 
+config BR2_PACKAGE_WPA_SUPPLICANT_P2P
+	bool "Enable support for P2P"
+	help
+	  Enable support for Wi-Fi P2P (Wifi Direct)
+
 endif
