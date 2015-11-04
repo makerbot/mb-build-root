@@ -1,0 +1,41 @@
+diff --git a/cli/src/main.cpp b/cli/src/main.cpp
+index cc43643..382db43 100644
+--- a/cli/src/main.cpp
++++ b/cli/src/main.cpp
+@@ -52,6 +52,7 @@ bool search_multi = false;
+ bool use_hybrid = false;
+ bool use_global = false;
+ bool verbose = false;
++bool qr_only = false;
+ 
+ }
+ 
+@@ -79,6 +80,9 @@ int read_image(Ref<LuminanceSource> source, bool hybrid, string expected) {
+       binarizer = new GlobalHistogramBinarizer(source);
+     }
+     DecodeHints hints(DecodeHints::DEFAULT_HINT);
++    if (qr_only) {
++      hints = DecodeHints(DecodeHints::QR_CODE_HINT);
++    }
+     hints.setTryHarder(try_harder);
+     Ref<BinaryBitmap> binary(new BinaryBitmap(binarizer));
+     if (search_multi) {
+@@ -192,6 +196,7 @@ int main(int argc, char** argv) {
+          << "  --test-mode               compare IMAGEs against text files" << endl
+          << "  --try-harder              spend more time to try to find a barcode" << endl
+          << "  --search-multi            search for more than one bar code" << endl
++         << "  --qr                      only parse for qr codes" << endl
+          << endl
+          << "Example usage:" << endl
+          << "  zxing --test-mode *.jpg" << endl
+@@ -238,6 +243,10 @@ int main(int argc, char** argv) {
+       search_multi = true;
+       continue;
+     }
++    if (filename.compare("--qr") == 0){
++      qr_only = true;
++      continue;
++    }
+ 
+     if (filename.length() > 3 &&
+         (filename.substr(filename.length() - 3, 3).compare("txt") == 0 ||
