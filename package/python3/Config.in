@@ -70,6 +70,12 @@ config BR2_PACKAGE_PYTHON3_READLINE
 	  readline module for Python3 (required for command-line
 	  editing in the Python shell).
 
+config BR2_PACKAGE_PYTHON3_GDBM
+       select BR2_PACKAGE_GDBM
+       bool "gdbm"
+       help
+         _gdbm backend for the dbm Python3 module
+
 config BR2_PACKAGE_PYTHON3_SSL
 	select BR2_PACKAGE_OPENSSL
 	bool "ssl"
