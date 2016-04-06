@@ -1,0 +1,32 @@
+diff -Naur python3-3.4.3/Lib/importlib/machinery.py python3-3.4.3-2]/Lib/importlib/machinery.py
+--- python3-3.4.3/Lib/importlib/machinery.py	2015-02-25 06:27:44.000000000 -0500
++++ python3-3.4.3-2]/Lib/importlib/machinery.py	2016-04-08 15:57:19.381641570 -0400
+@@ -2,18 +2,18 @@
+ 
+ import _imp
+ 
+-from ._bootstrap import (SOURCE_SUFFIXES, DEBUG_BYTECODE_SUFFIXES,
++from importlib._bootstrap import (SOURCE_SUFFIXES, DEBUG_BYTECODE_SUFFIXES,
+                          OPTIMIZED_BYTECODE_SUFFIXES, BYTECODE_SUFFIXES,
+                          EXTENSION_SUFFIXES)
+-from ._bootstrap import ModuleSpec
+-from ._bootstrap import BuiltinImporter
+-from ._bootstrap import FrozenImporter
+-from ._bootstrap import WindowsRegistryFinder
+-from ._bootstrap import PathFinder
+-from ._bootstrap import FileFinder
+-from ._bootstrap import SourceFileLoader
+-from ._bootstrap import SourcelessFileLoader
+-from ._bootstrap import ExtensionFileLoader
++from importlib._bootstrap import ModuleSpec
++from importlib._bootstrap import BuiltinImporter
++from importlib._bootstrap import FrozenImporter
++from importlib._bootstrap import WindowsRegistryFinder
++from importlib._bootstrap import PathFinder
++from importlib._bootstrap import FileFinder
++from importlib._bootstrap import SourceFileLoader
++from importlib._bootstrap import SourcelessFileLoader
++from importlib._bootstrap import ExtensionFileLoader
+ 
+ 
+ def all_suffixes():
