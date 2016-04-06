@@ -350,6 +350,14 @@ endmenu
 endif
 source "package/php/Config.in"
 source "package/python/Config.in"
+
+if BR2_PACKAGE_PYTHON3
+menu "external python3 modules"
+source "package/python3-codernitydb3/Config.in"
+source "package/host-python3-setuptools/Config.in"
+endmenu
+endif
+
 if BR2_PACKAGE_PYTHON
 menu "external python modules"
 source "package/python-bottle/Config.in"

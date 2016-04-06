@@ -1,0 +1,7 @@
+config BR2_PACKAGE_PYTHON_CODERNITYDB3
+	bool "python3-codernitydb3"
+	depends on BR2_PACKAGE_PYTHON3
+	help
+		CodernityDB python3 library for a no-sql based database
+
+		https://github.com/andy0130tw/CodernityDB3
