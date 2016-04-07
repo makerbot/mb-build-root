@@ -27,7 +27,7 @@ HOST_PYTHON3_CONF_OPT += 	\
 	--without-cxx-main 	\
 	--disable-sqlite3	\
 	--disable-tk		\
-	--with-expat=system	\
+	--with-system-expat	\
 	--disable-curses	\
 	--disable-codecs-cjk	\
 	--disable-nis		\
@@ -74,9 +74,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_PYTHON3_PYEXPAT),y)
 PYTHON3_DEPENDENCIES += expat
-PYTHON3_CONF_OPT += --with-expat=system
-else
-PYTHON3_CONF_OPT += --with-expat=none
+PYTHON3_CONF_OPT += --with-system-expat
 endif
 
 ifeq ($(BR2_PACKAGE_PYTHON3_GDBM),y)
