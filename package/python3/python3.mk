@@ -77,10 +77,6 @@ PYTHON3_DEPENDENCIES += expat
 PYTHON3_CONF_OPT += --with-system-expat
 endif
 
-ifeq ($(BR2_PACKAGE_PYTHON3_GDBM),y)
-PYTHON3_DEPENDENCIES += gdbm
-endif
-
 ifeq ($(BR2_PACKAGE_PYTHON3_PYC_ONLY),y)
 PYTHON3_CONF_OPT += --enable-old-stdlib-cache
 endif
