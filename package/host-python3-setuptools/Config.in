@@ -1,0 +1,8 @@
+config BR2_PACKAGE_HOST_PYTHON3_SETUPTOOLS
+	bool "host-python3-setuptools"
+	depends on BR2_PACKAGE_PYTHON3
+	depends on BR2_PACKAGE_PYTHON3_PYEXPAT
+	help
+		Download, build, install, upgrade, and uninstall Python packages.
+
+		http://pypi.python.org/pypi/setuptools
