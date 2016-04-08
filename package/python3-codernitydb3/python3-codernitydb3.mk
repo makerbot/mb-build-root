@@ -17,7 +17,7 @@ endef
 define PYTHON3_CODERNITYDB3_INSTALL_TARGET_CMDS
 	(cd $(@D); \
 	PYTHONPATH=$(TARGET_DIR)/usr/lib/python$(PYTHON3_VERSION_MAJOR)/site-packages \
-	$(HOST_DIR)/usr/bin/python3 setup.py install --prefix=$(TARGET_DIR)/usr)
+	$(HOST_DIR)/usr/bin/python3 setup.py install --prefix=$(TARGET_DIR)/usr --single-version-externally-managed --root=/)
 endef
 
 $(eval $(generic-package))
