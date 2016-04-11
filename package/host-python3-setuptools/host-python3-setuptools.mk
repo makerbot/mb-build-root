@@ -13,8 +13,9 @@ define HOST_PYTHON3_SETUPTOOLS_BUILD_CMDS
 	(cd $(@D); $(HOST_DIR)/usr/bin/python3 setup.py build)
 endef
 
-define HOST_PYTHON3_SETUPTOOLS_INSTALL_CMDS
+define HOST_PYTHON3_SETUPTOOLS_INSTALL_TARGET_CMDS
 	(cd $(@D); \
+	PYTHONPATH=$(TARGET_DIR)/usr/lib/python$(PYTHON3_VERSION_MAJOR)/site-packages \
 	$(HOST_DIR)/usr/bin/python3 setup.py install --prefix=$(HOST_DIR)/usr)
 endef
 

@@ -31,7 +31,6 @@ HOST_PYTHON3_CONF_OPT += 	\
 	--disable-curses	\
 	--disable-codecs-cjk	\
 	--disable-nis		\
-	--disable-unicodedata	\
 	--disable-test-modules	\
 	--disable-idle3		\
 	--disable-ossaudiodev	\
