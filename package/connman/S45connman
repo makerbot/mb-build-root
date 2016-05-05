@@ -3,7 +3,7 @@
 case "$1" in
 	start)
 		echo -n "Starting connman ... "
-		start-stop-daemon -S -q -m -b -p /var/run/connmand.pid --exec /usr/sbin/connmand -- -n
+		start-stop-daemon -S -q -m -b -p /var/run/connmand.pid --exec /usr/sbin/connmand -- -n -d
 		echo "done."
 		;;
 	stop)
