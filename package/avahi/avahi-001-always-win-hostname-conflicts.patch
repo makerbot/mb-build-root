@@ -1,0 +1,12 @@
+diff -purN avahi-0.6.31-new/avahi-core/server.c avahi-0.6.31/avahi-core/server.c
+--- avahi-0.6.31-new/avahi-core/server.c	2016-06-03 12:02:56.065351681 -0400
++++ avahi-0.6.31/avahi-core/server.c	2011-03-10 20:11:57.005249090 -0500
+@@ -227,7 +227,7 @@ static void incoming_probe(AvahiServer *
+     if (!ours) {
+         char *t = avahi_record_to_string(record);
+ 
+-        if (1)
++        if (won)
+             avahi_log_debug("Received conflicting probe [%s]. Local host won.", t);
+         else if (lost) {
+             avahi_log_debug("Received conflicting probe [%s]. Local host lost. Withdrawing.", t);
