@@ -1,0 +1,12 @@
+diff -purN connman-1.32-orig/plugins/wifi.c connman-1.32/plugins/wifi.c
+--- connman-1.32-orig/plugins/wifi.c	2016-06-14 17:29:42.805104894 -0400
++++ connman-1.32/plugins/wifi.c	2016-06-14 17:30:08.645103757 -0400
+@@ -72,7 +72,7 @@
+ #define P2P_LISTEN_INTERVAL 2000
+ 
+ #define GSUP_80211_ASSOC_STATUS_NO_ADDITIONAL_CLIENT 17
+-#define WPA_SUP_LOAD_SHAPING_MAX_RETRIES 3
++#define WPA_SUP_LOAD_SHAPING_MAX_RETRIES 11 
+ static struct connman_technology *wifi_technology = NULL;
+ static struct connman_technology *p2p_technology = NULL;
+ 
