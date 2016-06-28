@@ -1,0 +1,12 @@
+diff -purN a/avahi-common/defs.h b/avahi-common/defs.h
+--- a/avahi-common/defs.h	2016-06-28 09:52:10.043996270 -0400
++++ b/avahi-common/defs.h	2011-03-10 20:11:57.005249090 -0500
+@@ -346,7 +346,7 @@ 
+ /** @} */
+ 
+ /** The default TTL for RRs which contain a host name of some kind. */
+-#define AVAHI_DEFAULT_TTL_HOST_NAME (120)
++#define AVAHI_DEFAULT_TTL_HOST_NAME (20)
+ 
+ /** The default TTL for all other records. */
+ #define AVAHI_DEFAULT_TTL (75*60)
