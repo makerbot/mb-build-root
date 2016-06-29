@@ -1,0 +1,150 @@
+Note: This patch is from the connman mailing list: https://www.mail-archive.com/connman@lists.01.org/msg00134.html (message 2). It is not currently in a connman release but probably will be at some point, likely the end of 2016 release. If/when we upgrade to that release, we should remove this patch and patch 003.
+Date: Fri,  8 Apr 2016 00:29:48 -0700
+From: nav...@nestlabs.com
+To: connman@lists.01.org
+Cc: Naveen Singh <nasi...@google.com>
+Subject: [PATCH 2/2] Connectable network in wpa_s should not be marked
+	unavailable
+Message-ID: <1460100588-106220-2-git-send-email-nav...@nestlabs.com>
+
+From: Naveen Singh <nasi...@google.com>
+
+If a network is added to wpa_s through AddNetwork, never mark that
+network unavailable even if scan did not find this network. The reason
+for this is that even if this network is not seen in scan results, wpa_s
+will keep tring to connect to same network and in case this network is
+found later on, wifi connection will be established but since it was
+marked unavailable earlier, connman service state transition would not
+happen.
+---
+ include/network.h |  4 ++++
+ plugins/wifi.c	   | 29 +++++++++++++++++++++++++++++
+ src/device.c	   |  5 ++++-
+ src/network.c	   | 12 ++++++++++++
+ 4 files changed, 49 insertions(+), 1 deletion(-)
+
+diff --git a/include/network.h b/include/network.h
+index d772699..bf8d809 100644
+--- a/include/network.h
++++ b/include/network.h
+@@ -102,6 +102,10 @@ bool connman_network_get_connected(struct connman_network *network); 
+ 
+ bool connman_network_get_associating(struct connman_network *network);
+ 
++bool connman_network_get_connectable(struct connman_network *network);
++
++int connman_network_set_connectable(struct connman_network *network, bool connectable);
++
+ void connman_network_clear_hidden(void *user_data);
+ int connman_network_connect_hidden(struct connman_network *network,
+			char *identity, char* passphrase, void *user_data);
+diff --git a/plugins/wifi.c b/plugins/wifi.c
+index e76423d..64d42d8 100644
+--- a/plugins/wifi.c
++++ b/plugins/wifi.c
+@@ -2100,7 +2100,21 @@ static int network_connect(struct connman_network *network) 
+		wifi->pending_network = network;
+		g_free(ssid);
+	} else {
++
++		/*
++		 * This is the network that is going to get plumbed into wpa_s
++		 * Mark the previous network that is plumbed in wpa_s as not
++		 * connectable and then the current one as connectable. This flag
++		 * will be used to ensure that the network that is sitting in wpa_s
++		 * never gets marked unavailable even though the scan did not find
++		 * this network.
++		 */
++		if (wifi->network) {
++			connman_network_set_connectable(wifi->network, false);
++		}
++
+		wifi->network = connman_network_ref(network);
++		connman_network_set_connectable(wifi->network, true);
+		wifi->retries = 0;
+ 
+		return g_supplicant_interface_connect(interface, ssid,
+@@ -2124,6 +2138,7 @@ static void disconnect_callback(int result, GSupplicantInterface *interface,
+	}
+ 
+	if (wifi->network) {
++		connman_network_set_connectable(wifi->network, false);
+		connman_network_set_connected(wifi->network, false);
+		wifi->network = NULL;
+	}
+@@ -2741,6 +2756,20 @@ static void network_removed(GSupplicantNetwork *network)
+	if (!connman_network)
+		return;
+ 
++	/*
++	 * wpa_s did not find this network in last scan and hence it generated
++	 * this callback. In case if this is the network with which device was connected
++	 * to, even though network_removed was called, wpa_s will keep trying to connect to
++	 * the same network and once the network is back, it will proceed with the connection.
++	 * Now if connman would have removed this network from network hash table, on a successful
++	 * connection complete indication service state machine will not move. End result would be
++	 * only a L2 level connection and no IP address. This check ensures that even if the
++	 * network_removed gets called for the previously connected network do not remove it from
++	 * network hash table.
++	 */
++	if (wifi->network == connman_network)
++		return;
++
+	wifi->networks = g_slist_remove(wifi->networks, connman_network);
+ 
+	connman_device_remove_network(wifi->device, connman_network);
+diff --git a/src/device.c b/src/device.c
+index 188106c..22d9cde 100644
+--- a/src/device.c
++++ b/src/device.c
+@@ -671,7 +671,7 @@ static void mark_network_unavailable(gpointer key, gpointer value,
+	struct connman_network *network = value;
+ 
+	if (connman_network_get_connected(network) ||
+-			connman_network_get_connecting(network))
++			connman_network_get_connecting(network) || connman_network_get_connectable(network)) 
+		return;
+ 
+	connman_network_set_available(network, false);
+@@ -688,6 +688,9 @@ static gboolean remove_unavailable_network(gpointer key, gpointer value,
+	if (connman_network_get_available(network))
+		return FALSE;
+ 
++	if (connman_network_get_connectable(network))
++		return FALSE;
++
+	return TRUE;
+ }
+ 
+diff --git a/src/network.c b/src/network.c
+index db3d2f3..a24eadb 100644
+--- a/src/network.c
++++ b/src/network.c
+@@ -50,6 +50,7 @@ struct connman_network {
+	bool available;
+	bool connected;
+	bool roaming;
++	bool connectable;
+	uint8_t strength;
+	uint16_t frequency;
+	char *identifier;
+@@ -825,6 +826,17 @@ static gint compare_priority(gconstpointer a, gconstpointer b)
+	return driver2->priority - driver1->priority;
+ }
+ 
++int connman_network_set_connectable(struct connman_network *network, bool connectable)
++{
++	network->connectable = connectable;
++	return 0;
++}
++
++bool connman_network_get_connectable(struct connman_network *network)
++{
++	return network->connectable;
++}
++
+ /**
+  * connman_network_driver_register:
+  * @driver: network driver definition
+-- 
+2.8.0.rc3.226.g39d4020

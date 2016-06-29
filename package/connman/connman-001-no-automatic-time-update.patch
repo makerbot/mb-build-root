@@ -1,0 +1,25 @@
+From 83d811b3c6c33966030c89cf1e4904d7817b75b0 Mon Sep 17 00:00:00 2001
+From: Julien Massot <jmassot@aldebaran-robotics.com>
+Date: Wed, 27 Nov 2013 17:26:33 +0100
+Subject: [PATCH] clock: set default time/timezone update to manual
+
+Avoids automatic time update.
+---
+ src/clock.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/clock.c b/src/clock.c
+index 2ce61d9..b004745 100644
+--- a/src/clock.c
++++ b/src/clock.c
+@@ -35,8 +35,8 @@ enum timezone_updates {
+ 	TIMEZONE_UPDATES_AUTO    = 2,
+ };
+ 
+-static enum time_updates time_updates_config = TIME_UPDATES_AUTO;
+-static enum timezone_updates timezone_updates_config = TIMEZONE_UPDATES_AUTO;
++static enum time_updates time_updates_config = TIME_UPDATES_MANUAL;
++static enum timezone_updates timezone_updates_config = TIMEZONE_UPDATES_MANUAL;
+ 
+ static char *timezone_config = NULL;
+ 

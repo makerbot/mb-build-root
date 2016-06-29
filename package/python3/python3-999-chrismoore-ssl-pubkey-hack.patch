@@ -1,16 +1,16 @@
 --- python3-3.3.0.orig/Modules/_ssl.c	2012-09-29 04:00:44.000000000 -0400
 +++ python3-3.3.0/Modules/_ssl.c	2014-12-08 12:23:09.796826042 -0500
-@@ -872,7 +872,9 @@
-     PyObject *issuer;
+@@ -1101,7 +1101,9 @@
      PyObject *version;
      PyObject *sn_obj;
+     PyObject *obj;
 +    PyObject *pubkey_obj;
      ASN1_INTEGER *serialNumber;
 +    const ASN1_BIT_STRING *pubkey;
      char buf[2048];
      int len;
      ASN1_TIME *notBefore, *notAfter;
-@@ -909,6 +911,16 @@
+@@ -1140,6 +1142,16 @@
      }
      Py_DECREF(version);
  
