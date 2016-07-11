@@ -4,66 +4,19 @@ import os
 import shutil
 import subprocess
 
+import br_utils
+
 # Set the build configuration here as <name>_defconfig
 config = 'mb_stardust_reva_defconfig'
 
 this_dir = os.path.realpath(os.path.dirname(__file__))
 
-def run_cmd(cmd):
-    print(' '.join(cmd))
-    subprocess.check_call(cmd, cwd=this_dir)
-
-cross_compile_path = os.path.abspath(os.path.join(
-    this_dir,
-    os.pardir,
-    'linaro-linux-gnu',
-    'gcc-linaro-4.9-2015.02-3-x86_64_arm-linux-gnueabihf',
-))
-
-def make_defconfig(debug=False):
-    """
-    Generate and return the contents of our defconfig file
-
-    This file is generated from the checked in mbdefconfig, and
-    when debugging is selected, additional defconfig entries are
-    added from mbdefconfig.debug.  We override mbdefconfig lines
-    which specify absolute filepaths so that the absolute
-    filepaths are correct for the current machine.  This allows
-    packages to be added by menuconfig+savedefconfig without
-    breaking these absolute filepaths.
-    """
-    config_override = {
-        'BR2_TOOLCHAIN_EXTERNAL_PATH': cross_compile_path,
-        'BR2_PACKAGE_BUSYBOX_CONFIG':
-            os.path.join(this_dir, 'busybox.mbconfig'),
-    }
-
-    text = ''
-
-    with open(os.path.join(this_dir, 'mbdefconfig')) as src:
-        for line in src:
-            var = line.split('=')[0]
-            if var in config_override:
-                text += '{}="{}"\n'.format(var, config_override[var])
-            else:
-                text += line
-
-    if debug:
-        with open(os.path.join(this_dir, 'mbdefconfig.debug')) as src:
-            text += src.read()
-
-    return text
-
 def build(debug=False, num_cores=4):
-    # Just always write the defconfig
-    with open(os.path.join(this_dir, 'configs/mb_defconfig'), 'w') as f:
-        f.write(make_defconfig(debug))
-
-    # Create the full configuration file
-    run_cmd(['make', 'mb_defconfig'])
+    # Ensure we have a configuration to build
+    br_utils.make_config(debug)
 
     # Actually build
-    run_cmd(['make', '-j', str(num_cores)])
+    br_utils.run_cmd(['make', '-j', str(num_cores)])
 
 def install_tree(src_path, install_path, manifest_file):
     """
