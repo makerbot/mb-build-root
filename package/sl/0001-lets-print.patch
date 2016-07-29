@@ -1,0 +1,12 @@
+diff -purN sl2/sl.h sl-5.02/sl.h
+--- sl2/sl.h	2016-07-29 16:34:31.258192488 -0400
++++ sl-5.02/sl.h	2016-07-29 16:33:37.338194861 -0400
+@@ -52,7 +52,7 @@
+ #define COAL03 "    _________________         "
+ #define COAL04 "   _|                \\_____A  "
+ #define COAL05 " =|                        |  "
+-#define COAL06 " -|                        |  "
++#define COAL06 " -|     LET'S PRINT!       |  "
+ #define COAL07 "__|________________________|_ "
+ #define COAL08 "|__________________________|_ "
+ #define COAL09 "   |_D__D__D_|  |_D__D__D_|   "
