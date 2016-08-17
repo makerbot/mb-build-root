@@ -333,6 +333,7 @@ endmenu
 if BR2_PACKAGE_BUSYBOX_SHOW_OTHERS
 	source "package/devmem2/Config.in"
 endif
+        source "package/dfu-util/Config.in"
 	source "package/dmidecode/Config.in"
 	source "package/dmraid/Config.in"
 	source "package/dtv-scan-tables/Config.in"
