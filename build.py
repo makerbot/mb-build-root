@@ -106,6 +106,9 @@ if 'TR_BUILD' in os.environ:
     for arg in ('clean', 'debug', 'build', 'install'):
         globals()['TR_ARG_'+arg] = (os.environ['TR_ARG_'+arg] == 'True')
 
+    install_dir = os.environ['TR_ARG_install_dir']
+    br_utils.set_install_dir(install_dir)
+
     if TR_ARG_clean:
         clean()
 
@@ -113,7 +116,7 @@ if 'TR_BUILD' in os.environ:
         build(TR_ARG_debug, os.environ['TR_ARG_num_cores'])
 
     if TR_ARG_install:
-        install(os.environ['TR_ARG_install_dir'])
+        install(install_dir)
 
 else:
     build()

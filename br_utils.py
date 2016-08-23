@@ -11,18 +11,17 @@ def run_cmd(cmd):
     print(' '.join(cmd))
     subprocess.check_call(cmd, cwd=this_dir)
 
-cross_compile_path = os.path.abspath(os.path.join(
-    this_dir,
-    os.pardir,
-    'linaro-linux-gnu',
-    'gcc-linaro-4.9-2015.02-3-x86_64_arm-linux-gnueabihf',
-))
+def set_install_dir(install_dir):
+    global config_override
+    config_override = {
+        'BR2_TOOLCHAIN_EXTERNAL_PATH':
+            os.path.join(install_dir, 'linaro-linux-gnu'),
+        'BR2_PACKAGE_BUSYBOX_CONFIG':
+            os.path.join(this_dir, 'busybox.mbconfig'),
+    }
 
-config_override = {
-    'BR2_TOOLCHAIN_EXTERNAL_PATH': cross_compile_path,
-    'BR2_PACKAGE_BUSYBOX_CONFIG':
-        os.path.join(this_dir, 'busybox.mbconfig'),
-}
+# Set a sane default here so that we shouldn't have to worry about this
+set_install_dir(os.path.realpath(os.path.join(this_dir, '../../Install')))
 
 config_src = os.path.join(this_dir, 'mbdefconfig')
 debug_src = os.path.join(this_dir, 'mbdefconfig.debug')
