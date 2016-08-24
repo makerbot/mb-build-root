@@ -2,6 +2,7 @@
 
 import os
 import shutil
+import stat
 import subprocess
 
 import br_utils
@@ -54,6 +55,10 @@ def install_tree(src_path, install_path, manifest_file):
                 if os.path.lexists(install_file):
                     os.remove(install_file)
                 shutil.copy2(src_file, install_file)
+                # User read-only files break other parts of our toolchain.
+                # TODO(chris): Fix the other parts of our toolchain
+                perm_bits = stat.S_IMODE(os.stat(install_file).st_mode)
+                os.chmod(install_file, perm_bits | stat.S_IWUSR)
             elif os.path.isdir(src_file):
                 continue
             else:
