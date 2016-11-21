@@ -99,6 +99,11 @@ def install(path):
         install_file(os.path.join(this_dir, "output/host/usr/bin/makedevs"),
                      os.path.join(path, "rootfs_util/makedevs"), f)
 
+        # Kind of a pain to get this script "installed" to host so we just
+        # copy it from the source (need to install genext2fs to use it).
+        install_file(os.path.join(this_dir, "package/mke2img/mke2img"),
+                     os.path.join(path, "rootfs_util/mke2img"), f)
+
 
 def clean():
     print("Removing output/")
