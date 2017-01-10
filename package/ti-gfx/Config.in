@@ -66,6 +66,11 @@ config BR2_PACKAGE_TI_GFX_ES8
 	help
 	  AM335x
 
+config BR2_PACKAGE_TI_GFX_ES9
+	bool "es9.x (AM43xx)"
+	help
+	  AM43xx
+
 endchoice
 
 endif

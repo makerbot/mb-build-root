@@ -39,6 +39,10 @@ ifeq ($(BR2_PACKAGE_TI_GFX_ES8),y)
 TI_GFX_OMAPES = 8.x
 TI_GFX_PLATFORM = ti335x
 endif
+ifeq ($(BR2_PACKAGE_TI_GFX_ES9),y)
+TI_GFX_OMAPES = 9.x
+TI_GFX_PLATFORM = ti43xx
+endif
 
 ifeq ($(BR2_PACKAGE_TI_GFX_DEBUG),y)
 TI_GFX_DEBUG_LIB = dbg
