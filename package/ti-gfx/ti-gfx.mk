@@ -20,7 +20,9 @@ TI_GFX_LICENSE = Technology / Software Publicly Available
 TI_GFX_LICENSE_FILES = TSPA.txt
 TI_GFX_INSTALL_STAGING = YES
 
+ifeq ($(BR2_PACKAGE_TI_GFX_KERNEL_MODULE),y)
 TI_GFX_DEPENDENCIES = linux
+endif
 TI_GFX_PROVIDES = libegl libgles powervr
 
 ifeq ($(BR2_PACKAGE_TI_GFX_ES3),y)
@@ -38,6 +40,10 @@ endif
 ifeq ($(BR2_PACKAGE_TI_GFX_ES8),y)
 TI_GFX_OMAPES = 8.x
 TI_GFX_PLATFORM = ti335x
+endif
+ifeq ($(BR2_PACKAGE_TI_GFX_ES9),y)
+TI_GFX_OMAPES = 9.x
+TI_GFX_PLATFORM = ti43xx
 endif
 
 ifeq ($(BR2_PACKAGE_TI_GFX_DEBUG),y)
@@ -99,9 +105,11 @@ define TI_GFX_EXTRACT_CMDS
 		--mode console
 endef
 
+ifeq ($(BR2_PACKAGE_TI_GFX_KERNEL_MODULE),y)
 define TI_GFX_BUILD_KM_CMDS
 	$(MAKE) $(TI_GFX_KM_MAKE_OPTS) -C $(@D)/GFX_Linux_KM all
 endef
+endif
 
 ifeq ($(BR2_PACKAGE_TI_GFX_DEMOS),y)
 define TI_GFX_BUILD_DEMO_CMDS
@@ -154,9 +162,11 @@ define TI_GFX_INSTALL_STAGING_CMDS
 		$(STAGING_DIR)/usr/lib/pkgconfig/glesv2.pc
 endef
 
+ifeq ($(BR2_PACKAGE_TI_GFX_KERNEL_MODULE),y)
 define TI_GFX_INSTALL_KM_CMDS
 	$(MAKE) $(TI_GFX_KM_MAKE_OPTS) -C $(@D)/GFX_Linux_KM install
 endef
+endif
 
 define TI_GFX_INSTALL_BINS_CMDS
 	$(foreach bin,$(TI_GFX_BIN),
