@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+import re
 import shutil
 import stat
 import subprocess
@@ -80,6 +81,65 @@ def install_file(src_path, install_path, manifest_file):
     shutil.copy2(src_path, install_path)
     manifest_file.write(install_path + '\n')
 
+def install_path(src_path, install_path, manifest_file):
+    """
+    So we don't have to give a fuck if something is a file or directory
+
+    If src_path is a symlink this acts on the link target.
+    """
+    if os.path.isdir(src_path):
+        install_tree(src_path, install_path, manifest_file)
+    else:
+        install_file(src_path, install_path, manifest_file)
+
+def patch_paths(filepath, old_prefix, new_prefix):
+    """
+    Patch absolute filepaths in place in the given file.
+
+    Looks for absolute filepaths that start with old_prefix in the given file
+    and replace that prefix with new_prefix.  We also check that they exist
+    and return the set of files that we found (minus the old_prefix).  This
+    will straight up break most binary files by changing the length of hard
+    coded strings, so make sure to only run this on text files that don't
+    care about this.
+    """
+    with open(filepath) as f:
+        contents = f.read()
+    # This pattern makes some assumptions about what characters are parts of
+    # file names.  It should work for what we currently need it for.
+    file_chars = r'[\w/.+-]'
+    patt = re.compile(
+        r'(?<!{0})(?P<fullpath>{1}/(?P<suffix>{0}*))(?!{0})'.format(
+            file_chars, re.escape(old_prefix)))
+    suffixes = set()
+    def repl(match):
+        if not os.path.exists(match.group('fullpath')):
+            raise Exception('%s references %s which does not exist' %
+                            (filepath, match.group('fullpath')))
+        suffixes.add(match.group('suffix'))
+        return new_prefix + '/' + match.group('suffix')
+    contents = patt.sub(repl, contents)
+    if suffixes:
+        print("Patching " + filepath)
+        with open(filepath, 'w') as f:
+            f.write(contents)
+    return suffixes
+
+def patch_tree(path, old_prefix, new_prefix):
+    """
+    Call patch_paths on every file found in the given path.
+
+    Don't choose a tree which contains any binary files that you actually
+    care about.  Returns the union of all patch_paths return values (ie a
+    set of all files that were referenced using old_prefix).
+    """
+    ret = set()
+    for dir, subdirs, files in os.walk(path):
+        for file in files:
+            filepath = os.path.join(dir, file)
+            ret.update(patch_paths(filepath, old_prefix, new_prefix))
+    return ret
+
 def install(path):
     with open(os.path.join(this_dir, "install_manifest.txt"), 'w') as f:
         # Install the actual root filesystem to the location where
@@ -103,6 +163,19 @@ def install(path):
         # copy it from the source (need to install genext2fs to use it).
         install_file(os.path.join(this_dir, "package/mke2img/mke2img"),
                      os.path.join(path, "rootfs_util/mke2img"), f)
+
+        # Look for hard coded cmake paths to host files and fix them.  We
+        # explicitly install these files except for things in sysroot which
+        # is just a copy of some things in staging.
+        cmake_path = os.path.join(path, "staging/usr/lib/cmake")
+        host = os.path.join(this_dir, "output/host")
+        install_prefix = '${CMAKE_INSTALL_PREFIX}'
+        sysroot = os.path.join(host, 'usr/arm-buildroot-linux-gnueabihf/sysroot')
+        patch_tree(cmake_path, sysroot, install_prefix + '/staging')
+        host_paths = patch_tree(cmake_path, host, install_prefix)
+        for host_path in host_paths:
+            install_path(os.path.join(host, host_path),
+                         os.path.join(path, host_path), f)
 
 
 def clean():
