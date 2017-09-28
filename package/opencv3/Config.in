@@ -1,13 +1,12 @@
 menuconfig BR2_PACKAGE_OPENCV3
 	bool "opencv3"
-	select BR2_PACKAGE_ZLIB
+	depends on BR2_TOOLCHAIN_HAS_ATOMIC
 	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL
 	depends on BR2_INSTALL_LIBSTDCPP
 	depends on BR2_USE_WCHAR
 	depends on !BR2_STATIC_LIBS # include dlfcn.h
-	# Causes some toolchain failures on Xtensa
-	depends on !BR2_xtensa
 	depends on !BR2_PACKAGE_OPENCV
+	select BR2_PACKAGE_ZLIB
 	help
 	  OpenCV (Open Source Computer Vision) is a library of programming
 	  functions for real time computer vision.
@@ -71,7 +70,7 @@ config BR2_PACKAGE_OPENCV3_WITH_GTK
 
 comment "gtk2 support needs libgtk2"
 	depends on BR2_USE_MMU # libgtk2 -> glib2
-	depends on BR2_ARCH_HAS_ATOMICS # libgtk2 -> cairo
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on !BR2_PACKAGE_LIBGTK2
 
 config BR2_PACKAGE_OPENCV3_WITH_GTK3
@@ -80,7 +79,7 @@ config BR2_PACKAGE_OPENCV3_WITH_GTK3
 
 comment "gtk3 support needs libgtk3"
 	depends on BR2_USE_MMU # libgtk3 -> glib2
-	depends on BR2_ARCH_HAS_ATOMICS # libgtk3 -> cairo
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on !BR2_PACKAGE_LIBGTK3
 
 config BR2_PACKAGE_OPENCV3_WITH_QT
@@ -130,7 +129,6 @@ comment "opengl support needs an OpenGL provider"
 
 endif # BR2_PACKAGE_OPENCV3_LIB_HIGHGUI
 
-
 config BR2_PACKAGE_OPENCV3_LIB_IMGCODECS
 	bool "imgcodecs"
 	select BR2_PACKAGE_OPENCV3_LIB_IMGPROC
@@ -167,10 +165,7 @@ config BR2_PACKAGE_OPENCV3_LIB_PHOTO
 config BR2_PACKAGE_OPENCV3_LIB_PYTHON
 	bool "python"
 	depends on BR2_PACKAGE_PYTHON || BR2_PACKAGE_PYTHON3
-	depends on BR2_aarch64 || BR2_arm || BR2_armeb || BR2_i386 \
-		|| BR2_mips || BR2_mipsel || BR2_powerpc || BR2_powerpc64 \
-		|| BR2_sh || BR2_x86_64 # python-numpy
-	depends on !BR2_TOOLCHAIN_USES_UCLIBC || BR2_i386 || BR2_x86_64 # python-numpy
+	depends on BR2_PACKAGE_PYTHON_NUMPY_ARCH_SUPPORTS
 	select BR2_PACKAGE_PYTHON_NUMPY
 	help
 	  Include opencv_python module into the OpenCV build.
@@ -246,8 +241,10 @@ comment "3rd party support"
 
 config BR2_PACKAGE_OPENCV3_WITH_FFMPEG
 	bool "ffmpeg support"
+	depends on BR2_PACKAGE_FFMPEG_ARCH_SUPPORTS
 	select BR2_PACKAGE_BZIP2
 	select BR2_PACKAGE_FFMPEG
+	select BR2_PACKAGE_FFMPEG_AVRESAMPLE
 	select BR2_PACKAGE_FFMPEG_SWSCALE
 	help
 	  Use ffmpeg from the target system.
@@ -337,7 +334,7 @@ config BR2_PACKAGE_OPENCV3_INSTALL_DATA
 endif # BR2_PACKAGE_OPENCV3
 
 comment "opencv3 needs a toolchain w/ C++, NPTL, wchar, dynamic library"
-	depends on !BR2_xtensa
+	depends on BR2_TOOLCHAIN_HAS_ATOMIC
 	depends on !BR2_INSTALL_LIBSTDCPP || \
 		!BR2_USE_WCHAR || \
 		!BR2_TOOLCHAIN_HAS_THREADS_NPTL || \

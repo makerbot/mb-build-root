@@ -4,11 +4,13 @@
 #
 ################################################################################
 
-MOSQUITTO_VERSION = 1.4.2
+MOSQUITTO_VERSION = 1.4.12
 MOSQUITTO_SITE = http://mosquitto.org/files/source
-MOSQUITTO_LICENSE = EPLv1.0 or EDLv1.0
+MOSQUITTO_LICENSE = EPL-1.0 or EDLv1.0
 MOSQUITTO_LICENSE_FILES = LICENSE.txt epl-v10 edl-v10
 MOSQUITTO_INSTALL_STAGING = YES
+MOSQUITTO_PATCH = \
+	https://mosquitto.org/files/cve/2017-9868/mosquitto-1.4.x_cve-2017-9868.patch
 
 MOSQUITTO_MAKE_OPTS = \
 	UNAME=Linux \
@@ -16,6 +18,13 @@ MOSQUITTO_MAKE_OPTS = \
 	prefix=/usr \
 	WITH_WRAP=no \
 	WITH_DOCS=no
+
+# adns uses getaddrinfo_a
+ifeq ($(BR2_TOOLCHAIN_USES_GLIBC),y)
+MOSQUITTO_MAKE_OPTS += WITH_ADNS=yes
+else
+MOSQUITTO_MAKE_OPTS += WITH_ADNS=no
+endif
 
 ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),y)
 MOSQUITTO_MAKE_OPTS += WITH_THREADING=yes
@@ -81,6 +90,14 @@ endef
 define MOSQUITTO_INSTALL_INIT_SYSV
 	$(INSTALL) -D -m 0755 package/mosquitto/S50mosquitto \
 		$(TARGET_DIR)/etc/init.d/S50mosquitto
+endef
+
+define MOSQUITTO_INSTALL_INIT_SYSTEMD
+	$(INSTALL) -D -m 644 package/mosquitto/mosquitto.service \
+		$(TARGET_DIR)/usr/lib/systemd/system/mosquitto.service
+	mkdir -p $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants
+	ln -fs ../../../../usr/lib/systemd/system/mosquitto.service \
+		$(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/mosquitto.service
 endef
 
 define MOSQUITTO_USERS

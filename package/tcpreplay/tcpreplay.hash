@@ -1,3 +1,2 @@
-# From http://sourceforge.net/projects/tcpreplay/files/tcpreplay/4.1.0/
-md5	fd48d73d84ade30ece0a9abb538c82d5	tcpreplay-4.1.0.tar.gz
-sha1	9723d82a0136d963bcc2665d562cb562d216a1c1	tcpreplay-4.1.0.tar.gz
+# Locally calculated after checking pgp signature
+sha256 68d8d49dab5bf58b2e8d244eee1ee7f2379d967da19fe97dd9d59bcf40a22abc  tcpreplay-4.2.3.tar.gz

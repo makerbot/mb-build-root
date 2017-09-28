@@ -69,6 +69,10 @@ check_prog_host "which"
 # Verify that sed is installed
 check_prog_host "sed"
 
+# 'file' must be present and must be exactly /usr/bin/file,
+# otherwise libtool fails in incomprehensible ways.
+check_prog_host "/usr/bin/file"
+
 # Check make
 MAKE=$(which make 2> /dev/null)
 if [ -z "$MAKE" ] ; then
@@ -178,8 +182,7 @@ if test "${missing_progs}" = "yes" ; then
 	exit 1
 fi
 
-if grep ^BR2_TOOLCHAIN_BUILDROOT=y $BR2_CONFIG > /dev/null && \
-	grep ^BR2_ENABLE_LOCALE=y       $BR2_CONFIG > /dev/null ; then
+if grep ^BR2_NEEDS_HOST_UTF8_LOCALE=y $BR2_CONFIG > /dev/null; then
 	if ! which locale > /dev/null ; then
 		echo
 		echo "You need locale support on your build machine to build a toolchain supporting locales"
@@ -236,10 +239,32 @@ if grep -q ^BR2_HOSTARCH_NEEDS_IA32_COMPILER=y $BR2_CONFIG ; then
 	fi
 fi
 
-# Check that the Perl installation is complete enough to build
-# host-autoconf.
-if ! perl  -e "require Data::Dumper" > /dev/null 2>&1 ; then
-	echo "Your Perl installation is not complete enough, at least Data::Dumper is missing."
-	echo "On Debian/Ubuntu distributions, install the 'perl' package."
+# Check that the Perl installation is complete enough for Buildroot.
+required_perl_modules="Data::Dumper" # Needed to build host-autoconf
+required_perl_modules="$required_perl_modules ExtUtils::MakeMaker" # Used by host-libxml-parser-perl
+required_perl_modules="$required_perl_modules Thread::Queue" # Used by host-automake
+
+if grep -q ^BR2_PACKAGE_MPV=y $BR2_CONFIG ; then
+    required_perl_modules="$required_perl_modules Math::BigInt"
+    required_perl_modules="$required_perl_modules Math::BigRat"
+fi
+
+# This variable will keep the modules that are missing in your system.
+missing_perl_modules=""
+
+for pm in $required_perl_modules ; do
+	if ! perl  -e "require $pm" > /dev/null 2>&1 ; then
+		missing_perl_modules="$missing_perl_modules $pm"
+	fi
+done
+
+if [ -n "$missing_perl_modules" ] ; then
+	echo "Your Perl installation is not complete enough; at least the following"
+	echo "modules are missing:"
+	echo
+	for pm in $missing_perl_modules ; do
+		printf "\t $pm\n"
+	done
+	echo
 	exit 1
 fi

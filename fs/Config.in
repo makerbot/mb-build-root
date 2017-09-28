@@ -16,6 +16,7 @@ config BR2_TARGET_ROOTFS_DEPS_UBIFS
 
 endif
 
+source "fs/axfs/Config.in"
 source "fs/cloop/Config.in"
 source "fs/cpio/Config.in"
 source "fs/cramfs/Config.in"

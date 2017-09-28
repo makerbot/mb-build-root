@@ -4,11 +4,11 @@
 #
 ################################################################################
 
-DHCPCD_VERSION = 6.9.1
+DHCPCD_VERSION = 6.11.5
 DHCPCD_SOURCE = dhcpcd-$(DHCPCD_VERSION).tar.xz
 DHCPCD_SITE = http://roy.marples.name/downloads/dhcpcd
 DHCPCD_DEPENDENCIES = host-pkgconf
-DHCPCD_LICENSE = BSD-2c
+DHCPCD_LICENSE = BSD-2-Clause
 DHCPCD_LICENSE_FILES = dhcpcd.c
 
 ifeq ($(BR2_STATIC_LIBS),y)
@@ -23,6 +23,7 @@ define DHCPCD_CONFIGURE_CMDS
 	(cd $(@D); \
 	$(TARGET_CONFIGURE_OPTS) ./configure \
 		--os=linux \
+		--libexecdir=/lib/dhcpcd \
 		$(DHCPCD_CONFIG_OPTS) )
 endef
 

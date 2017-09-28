@@ -5,8 +5,7 @@
 ################################################################################
 
 POPT_VERSION = 1.16
-# rpm5.org down
-POPT_SITE = http://anduin.linuxfromscratch.org/sources/BLFS/svn/p
+POPT_SITE = http://rpm5.org/files/popt
 POPT_INSTALL_STAGING = YES
 POPT_LICENSE = MIT
 POPT_LICENSE_FILES = COPYING
@@ -22,6 +21,7 @@ POPT_CONF_ENV = ac_cv_va_copy=yes
 ifeq ($(BR2_PACKAGE_LIBICONV),y)
 POPT_CONF_ENV += am_cv_lib_iconv=yes
 POPT_CONF_OPTS += --with-libiconv-prefix=$(STAGING_DIR)/usr
+POPT_DEPENDENCIES += libiconv
 endif
 
 $(eval $(autotools-package))

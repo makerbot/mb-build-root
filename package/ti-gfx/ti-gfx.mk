@@ -23,6 +23,7 @@ TI_GFX_INSTALL_STAGING = YES
 ifeq ($(BR2_PACKAGE_TI_GFX_KERNEL_MODULE),y)
 TI_GFX_DEPENDENCIES = linux
 endif
+
 TI_GFX_PROVIDES = libegl libgles powervr
 
 ifeq ($(BR2_PACKAGE_TI_GFX_ES3),y)
@@ -107,7 +108,7 @@ endef
 
 ifeq ($(BR2_PACKAGE_TI_GFX_KERNEL_MODULE),y)
 define TI_GFX_BUILD_KM_CMDS
-	$(MAKE) $(TI_GFX_KM_MAKE_OPTS) -C $(@D)/GFX_Linux_KM all
+	$(TARGET_MAKE_ENV) $(MAKE) $(TI_GFX_KM_MAKE_OPTS) -C $(@D)/GFX_Linux_KM all
 endef
 endif
 
@@ -164,7 +165,7 @@ endef
 
 ifeq ($(BR2_PACKAGE_TI_GFX_KERNEL_MODULE),y)
 define TI_GFX_INSTALL_KM_CMDS
-	$(MAKE) $(TI_GFX_KM_MAKE_OPTS) -C $(@D)/GFX_Linux_KM install
+	$(TARGET_MAKE_ENV) $(MAKE) $(TI_GFX_KM_MAKE_OPTS) -C $(@D)/GFX_Linux_KM install
 endef
 endif
 

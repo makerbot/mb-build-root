@@ -4,17 +4,23 @@
 #
 ################################################################################
 
-MUTT_VERSION = 1.5.23
-MUTT_SITE = http://downloads.sourceforge.net/project/mutt/mutt
-MUTT_LICENSE = GPLv2+
+MUTT_VERSION = 1.8.2
+MUTT_SITE = https://bitbucket.org/mutt/mutt/downloads
+MUTT_LICENSE = GPL-2.0+
 MUTT_LICENSE_FILES = GPL
 MUTT_DEPENDENCIES = ncurses
-MUTT_CONF_OPTS = --disable-smtp
-MUTT_AUTORECONF = YES
+MUTT_CONF_OPTS = --disable-doc --disable-smtp
 
 ifeq ($(BR2_PACKAGE_LIBICONV),y)
 MUTT_DEPENDENCIES += libiconv
 MUTT_CONF_OPTS += --enable-iconv
+endif
+
+ifeq ($(BR2_PACKAGE_LIBIDN),y)
+MUTT_DEPENDENCIES += libidn
+MUTT_CONF_OPTS += --with-idn
+else
+MUTT_CONF_OPTS += --without-idn
 endif
 
 ifeq ($(BR2_PACKAGE_MUTT_IMAP),y)

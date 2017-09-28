@@ -4,10 +4,9 @@
 #
 ################################################################################
 
-SSHFS_VERSION = 2.5
-SSHFS_SITE = http://downloads.sourceforge.net/project/fuse/sshfs-fuse/$(SSHFS_VERSION)
-SSHFS_SOURCE = sshfs-fuse-$(SSHFS_VERSION).tar.gz
-SSHFS_LICENSE = GPLv2
+SSHFS_VERSION = 2.8
+SSHFS_SITE = https://github.com/libfuse/sshfs/releases/download/sshfs_$(SSHFS_VERSION)
+SSHFS_LICENSE = GPL-2.0
 SSHFS_LICENSE_FILES = COPYING
 SSHFS_DEPENDENCIES = \
 	libglib2 libfuse openssh \
