@@ -114,8 +114,9 @@ def patch_paths(filepath, old_prefix, new_prefix):
     suffixes = set()
     def repl(match):
         if not os.path.exists(match.group('fullpath')):
-            raise Exception('%s references %s which does not exist' %
-                            (filepath, match.group('fullpath')))
+            print('WARNING: %s references %s which does not exist' %
+                  (filepath, match.group('fullpath')))
+            return ''
         suffixes.add(match.group('suffix'))
         return new_prefix + '/' + match.group('suffix')
     contents = patt.sub(repl, contents)
