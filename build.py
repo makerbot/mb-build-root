@@ -5,6 +5,7 @@ import re
 import shutil
 import stat
 import subprocess
+import glob
 
 import br_utils
 
@@ -65,6 +66,12 @@ def install_tree(src_path, install_path, manifest_file):
             else:
                 raise Exception("Unhandled file type")
             manifest_file.write(install_file + '\n')
+
+def install_glob(pattern, install_dir, manifest_file):
+    files = glob.glob(pattern)
+    for f in files:
+        basename = os.path.basename(f)
+        install_file(f, os.path.join(install_dir, basename), manifest_file)
 
 def install_file(src_path, install_path, manifest_file):
     """
@@ -163,6 +170,12 @@ def install(path):
         # copy it from the source (need to install genext2fs to use it).
         install_file(os.path.join(this_dir, "package/mke2img/mke2img"),
                      os.path.join(path, "rootfs_util/mke2img"), f)
+
+        # install host dfu-util stuff
+        install_file(os.path.join(this_dir, "output/host/usr/lib/libdfu.so"),
+                     os.path.join(path, "usr/lib/libdfu.so"), f)
+        install_glob(os.path.join(this_dir, "output/host/usr/include/dfu*.h"),
+                     os.path.join(path, "usr/include/"), f)
 
         # Look for hard coded cmake paths to host files and fix them.  We
         # explicitly install these files except for things in sysroot which
