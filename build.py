@@ -174,7 +174,7 @@ def install(path):
         # install host dfu-util stuff
         install_file(os.path.join(this_dir, "output/host/usr/lib/libdfu.so"),
                      os.path.join(path, "usr/lib/libdfu.so"), f)
-        install_glob(os.path.join(this_dir, "output/host/usr/include/dfu*.h"),
+        install_glob(os.path.join(this_dir, "output/host/usr/include/*dfu*.h"),
                      os.path.join(path, "usr/include/"), f)
 
         # Look for hard coded cmake paths to host files and fix them.  We
