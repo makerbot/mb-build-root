@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-EXIV2_VERSION = 0.24
+EXIV2_VERSION = 0.25
 EXIV2_SITE = http://www.exiv2.org
 EXIV2_INSTALL_STAGING = YES
 
@@ -20,7 +20,7 @@ EXIV2_LICENSE = commercial
 # of the translated texts.
 EXIV2_CONF_OPTS += -DEXIV2_ENABLE_COMMERCIAL=ON -DEXIV2_ENABLE_NLS=OFF
 else
-EXIV2_LICENSE = GPLv2+
+EXIV2_LICENSE = GPL-2.0+
 EXIV2_LICENSE_FILES = COPYING
 endif
 

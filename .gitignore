@@ -15,3 +15,4 @@
 *.pyc
 /configs/mb_defconfig
 /install_manifest.txt
+/artifacts/

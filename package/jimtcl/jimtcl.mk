@@ -8,7 +8,7 @@ JIMTCL_VERSION = 0.75
 JIMTCL_SITE = http://snapshot.debian.org/archive/debian/20141023T043132Z/pool/main/j/jimtcl
 JIMTCL_SOURCE = jimtcl_$(JIMTCL_VERSION).orig.tar.xz
 JIMTCL_INSTALL_STAGING = YES
-JIMTCL_LICENSE = BSD-2c
+JIMTCL_LICENSE = BSD-2-Clause
 JIMTCL_LICENSE_FILES = LICENSE
 
 JIMTCL_HEADERS_TO_INSTALL = \
@@ -17,7 +17,7 @@ JIMTCL_HEADERS_TO_INSTALL = \
 	jim-signal.h \
 	jim-subcmd.h \
 	jim-win32compat.h \
-	jim-config.h \
+	jim-config.h
 
 ifeq ($(BR2_PACKAGE_TCL),)
 define JIMTCL_LINK_TCLSH
@@ -33,8 +33,8 @@ else
 JIMTCL_SHARED = --shared
 define JIMTCL_INSTALL_LIB
 	$(INSTALL) -m 0755 -D $(@D)/libjim.so.$(JIMTCL_VERSION) \
-		$(1)/usr/lib/libjim.$(JIMTCL_VERSION)
-	ln -s libjim.$(JIMTCL_VERSION) $(1)/usr/lib/libjim.so
+		$(1)/usr/lib/libjim.so.$(JIMTCL_VERSION)
+	ln -sf libjim.so.$(JIMTCL_VERSION) $(1)/usr/lib/libjim.so
 endef
 endif
 
@@ -46,8 +46,12 @@ define JIMTCL_CONFIGURE_CMDS
 	)
 endef
 
+# -fPIC is mandatory to build shared libraries on certain architectures
+# (e.g. SPARC) and causes no harm or drawbacks on other architectures
 define JIMTCL_BUILD_CMDS
-	$(MAKE) -C $(@D)
+	SH_CFLAGS="-fPIC" \
+	SHOBJ_CFLAGS="-fPIC" \
+	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D)
 endef
 
 define JIMTCL_INSTALL_STAGING_CMDS

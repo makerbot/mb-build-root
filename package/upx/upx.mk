@@ -7,7 +7,7 @@
 UPX_VERSION = 3.91
 UPX_SITE = http://upx.sourceforge.net/download
 UPX_SOURCE = upx-$(UPX_VERSION)-src.tar.bz2
-UPX_LICENSE = GPLv2+
+UPX_LICENSE = GPL-2.0+
 UPX_LICENSE_FILES = COPYING
 
 HOST_UPX_DEPENDENCIES = host-ucl host-zlib
@@ -17,6 +17,7 @@ HOST_UPX_DEPENDENCIES = host-ucl host-zlib
 define HOST_UPX_BUILD_CMDS
 	$(HOST_MAKE_ENV) $(MAKE) CPPFLAGS="$(HOST_CPPFLAGS)" \
 		LDFLAGS="$(HOST_LDFLAGS)" UPX_UCLDIR=$(HOST_DIR)/usr \
+		CXXFLAGS_WERROR= \
 		-C $(@D) all
 endef
 

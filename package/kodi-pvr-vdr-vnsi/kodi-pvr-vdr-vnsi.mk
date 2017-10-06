@@ -4,9 +4,11 @@
 #
 ################################################################################
 
-KODI_PVR_VDR_VNSI_VERSION = 550a4a2e093b4418394cdbe6f72cd7c76f0327b7
+# This cset is on the branch 'Krypton'
+# When Kodi is updated, then this should be updated to the corresponding branch
+KODI_PVR_VDR_VNSI_VERSION = 2a90c2f9a1f3e5889336a8df5426ff99b0318b0f
 KODI_PVR_VDR_VNSI_SITE = $(call github,kodi-pvr,pvr.vdr.vnsi,$(KODI_PVR_VDR_VNSI_VERSION))
-KODI_PVR_VDR_VNSI_LICENSE = GPLv2+
+KODI_PVR_VDR_VNSI_LICENSE = GPL-2.0+
 KODI_PVR_VDR_VNSI_LICENSE_FILES = src/client.h
 KODI_PVR_VDR_VNSI_DEPENDENCIES = kodi-platform
 

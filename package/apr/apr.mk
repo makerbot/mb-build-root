@@ -22,6 +22,7 @@ APR_CONF_ENV = \
 	apr_cv_mutex_robust_shared=no \
 	apr_cv_tcp_nodelay_with_cork=yes \
 	ac_cv_sizeof_struct_iovec=8 \
+	ac_cv_sizeof_pid_t=4 \
 	ac_cv_struct_rlimit=yes \
 	ac_cv_o_nonblock_inherited=no \
 	apr_cv_mutex_recursive=yes
@@ -34,6 +35,21 @@ endif
 
 # Fix lfs detection when cross compiling
 APR_CONF_ENV += apr_cv_use_lfs64=yes
+
+# Use non-portable atomics when available: 8 bytes atomics are used on
+# 64-bits architectures, 4 bytes atomics on 32-bits architectures. We
+# have to override ap_cv_atomic_builtins because the test used to
+# check for atomic builtins uses AC_TRY_RUN, which doesn't work when
+# cross-compiling.
+ifeq ($(BR2_ARCH_IS_64):$(BR2_TOOLCHAIN_HAS_SYNC_8),y:y)
+APR_CONF_OPTS += --enable-nonportable-atomics
+APR_CONF_ENV += ap_cv_atomic_builtins=yes
+else ifeq ($(BR2_ARCH_IS_64):$(BR2_TOOLCHAIN_HAS_SYNC_4),:y)
+APR_CONF_OPTS += --enable-nonportable-atomics
+APR_CONF_ENV += ap_cv_atomic_builtins=yes
+else
+APR_CONF_OPTS += --disable-nonportable-atomics
+endif
 
 ifeq ($(BR2_PACKAGE_UTIL_LINUX_LIBUUID),y)
 APR_DEPENDENCIES += util-linux

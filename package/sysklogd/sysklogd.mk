@@ -6,7 +6,7 @@
 
 SYSKLOGD_VERSION = 1.5.1
 SYSKLOGD_SITE = http://www.infodrom.org/projects/sysklogd/download
-SYSKLOGD_LICENSE = GPLv2+
+SYSKLOGD_LICENSE = GPL-2.0+
 SYSKLOGD_LICENSE_FILES = COPYING
 
 # Override BusyBox implementations if BusyBox is enabled.
@@ -14,8 +14,10 @@ ifeq ($(BR2_PACKAGE_BUSYBOX),y)
 SYSKLOGD_DEPENDENCIES = busybox
 endif
 
+# Override SKFLAGS which is used as CFLAGS.
 define SYSKLOGD_BUILD_CMDS
-	$(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D)
+	$(MAKE) $(TARGET_CONFIGURE_OPTS) SKFLAGS="$(TARGET_CFLAGS) -DSYSV" \
+		-C $(@D)
 endef
 
 define SYSKLOGD_INSTALL_TARGET_CMDS
