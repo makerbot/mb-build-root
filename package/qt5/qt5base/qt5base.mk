@@ -281,10 +281,14 @@ define QT5BASE_INSTALL_QT_CONF
 		$(QT5BASE_PKGDIR)/qt.conf.in > $(HOST_DIR)/bin/qt.conf
 endef
 
+# Custom hack -- manually remove all egldeviceintegrations plugins
+# Having these plugins present seems to cause qt to automatically load them
+# and loading these plugins breaks our system specifically.
 define QT5BASE_INSTALL_STAGING_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) install
 	$(QT5_LA_PRL_FILES_FIXUP)
 	$(QT5BASE_INSTALL_QT_CONF)
+	rm -rf $(STAGING_DIR)/usr/lib/qt/plugins/egldeviceintegrations
 endef
 
 define QT5BASE_INSTALL_TARGET_LIBS
