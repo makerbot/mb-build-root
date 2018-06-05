@@ -14,7 +14,7 @@ config = 'mb_stardust_reva_defconfig'
 this_dir = os.path.realpath(os.path.dirname(__file__))
 g_qt5_core_install_prefix = ''
 
-def find(name, path):
+def find_containing_dir(name, path):
     for root, dirs, files in os.walk(path):
         if name in files:
             return root
@@ -217,7 +217,8 @@ def install(path):
         # is just a copy of some things in staging.
         cmake_path = os.path.join(path, "staging/usr/lib/cmake")
         host = os.path.join(this_dir, "output/host")
-        qt5_core_config_cmake_dir = find('Qt5CoreConfig.cmake', host)
+        qt5_core_config_cmake_dir = find_containing_dir('Qt5CoreConfig.cmake',
+                                                        host)
         global g_qt5_core_install_prefix
         g_qt5_core_install_prefix = qt5_core_config_cmake_dir + "/../../../"
         install_prefix = '${CMAKE_INSTALL_PREFIX}'
