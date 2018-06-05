@@ -11,8 +11,13 @@ import br_utils
 
 # Set the build configuration here as <name>_defconfig
 config = 'mb_stardust_reva_defconfig'
-
 this_dir = os.path.realpath(os.path.dirname(__file__))
+g_qt5_core_install_prefix = ''
+
+def find(name, path):
+    for root, dirs, files in os.walk(path):
+        if name in files:
+            return root
 
 def build(debug=False, num_cores=4):
     # Ensure we have a configuration to build
@@ -99,6 +104,34 @@ def install_path(src_path, install_path, manifest_file):
     else:
         install_file(src_path, install_path, manifest_file)
 
+def fix_qt_paths(file_path):
+    # In 'Qt5CoreConfig.cmake' '_qt5Core_install_prefix' is defined.
+    # as "${CMAKE_CURRENT_LIST_DIR}/../../../", where CMAKE_CURRENT_LIST_DIR is
+    # the path to the Qt5CoreConfig.cmake file located under output hosts.
+    # Search for the '${_qt5Core_install_prefix}' string and replace it with
+    # 'path_to_Qt5CoreConfig.cmake/../../../'.
+    with open(file_path) as f:
+        contents = f.read()
+    # Match all file path strings that contain '$\{_qt5Core_install_prefix\}'
+    regex_pattern = re.compile(r'\"\$\{_qt5Core_install_prefix\}[\w/._+-]*\"')
+    matches = regex_pattern.findall(contents)
+    if len(matches) > 0:
+        regex_pattern = re.compile(r'\$\{_qt5Core_install_prefix\}')
+        for match in matches:
+            # Replace the '$\{_qt5Core_install_prefix\}' we found above with
+            # the actual file path that '$\{_qt5Core_install_prefix\}' is set
+            # to. Also, use normpath to remove unnecessary double dots and
+            # slashes so as to not mess up patch_paths().
+            new_path = os.path.normpath(re.sub(regex_pattern,
+                                               g_qt5_core_install_prefix,
+                                               match))
+            # Go through the contents string and replace all the items within
+            # matches with its modified path version
+            contents = re.sub(r'{}'.format(re.escape(match)),
+                              new_path, contents)
+        with open(file_path, 'w') as f:
+            f.write(contents)
+
 def patch_paths(filepath, old_prefix, new_prefix):
     """
     Patch absolute filepaths in place in the given file.
@@ -145,6 +178,7 @@ def patch_tree(path, old_prefix, new_prefix):
     for dir, subdirs, files in os.walk(path):
         for file in files:
             filepath = os.path.join(dir, file)
+            fix_qt_paths(filepath)
             ret.update(patch_paths(filepath, old_prefix, new_prefix))
     return ret
 
@@ -183,14 +217,17 @@ def install(path):
         # is just a copy of some things in staging.
         cmake_path = os.path.join(path, "staging/usr/lib/cmake")
         host = os.path.join(this_dir, "output/host")
+        qt5_core_config_cmake_dir = find('Qt5CoreConfig.cmake', host)
+        global g_qt5_core_install_prefix
+        g_qt5_core_install_prefix = qt5_core_config_cmake_dir + "/../../../"
         install_prefix = '${CMAKE_INSTALL_PREFIX}'
-        sysroot = os.path.join(host, 'usr/arm-buildroot-linux-gnueabihf/sysroot')
+        sysroot = os.path.join(host,
+                               'usr/arm-buildroot-linux-gnueabihf/sysroot')
         patch_tree(cmake_path, sysroot, install_prefix + '/staging')
         host_paths = patch_tree(cmake_path, host, install_prefix)
         for host_path in host_paths:
             install_path(os.path.join(host, host_path),
                          os.path.join(path, host_path), f)
-
 
 def clean():
     print("Removing output/")
@@ -205,6 +242,7 @@ if 'TR_BUILD' in os.environ:
 
     install_dir = os.environ['TR_ARG_install_dir']
     br_utils.set_install_dir(install_dir)
+    # install_dir is set to .../Toolchain-Release/Install
 
     if TR_ARG_clean:
         clean()
