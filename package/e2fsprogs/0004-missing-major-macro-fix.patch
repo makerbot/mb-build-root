@@ -1,3 +1,7 @@
+Author: Sam Petrocelli
+
+Add sys/sysmacros.h to various source files to fix error where the major macro
+is no longer defined in later kernel versions.
 diff --git a/debugfs/debugfs.c b/debugfs/debugfs.c
 index 72b5cbb..165f924 100644
 --- a/debugfs/debugfs.c
