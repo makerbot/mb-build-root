@@ -1,0 +1,82 @@
+From 4662c5b8a3bcac2f7c9bfc9cb55c1caaaef371de Mon Sep 17 00:00:00 2001
+From: Bill Canfield <wdc.rith@gmail.com>
+Date: Tue, 25 Oct 2016 15:55:56 -0400
+Subject: [PATCH] Build libdfu library that dfu_util binary (and others) will
+ depend upon
+
+---
+ configure.ac    |  2 ++
+ src/Makefile.am | 38 ++++++++++++++++++++++----------------
+ 2 files changed, 24 insertions(+), 16 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 8622114..5a00fde 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -13,6 +13,8 @@ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
+ # Checks for programs.
+ AC_PROG_CC
+ 
++LT_INIT
++
+ # Checks for libraries.
+ # On FreeBSD the libusb-1.0 is called libusb and resides in system location
+ AC_CHECK_LIB([usb], [libusb_init],, [native_libusb=no],)
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 70179c4..0cdd732 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -1,28 +1,34 @@
+ AM_CFLAGS = -Wall -Wextra
+ 
+-bin_PROGRAMS = dfu-util dfu-suffix dfu-prefix
+-dfu_util_SOURCES = main.c \
+-		portable.h \
+-		dfu_load.c \
+-		dfu_load.h \
++lib_LTLIBRARIES = libdfu.la
++libdfu_la_SOURCES = dfu_load.c \
+ 		dfu_util.c \
+-		dfu_util.h \
+ 		dfuse.c \
+-		dfuse.h \
+ 		dfuse_mem.c \
+-		dfuse_mem.h \
+ 		dfu.c \
++		dfu_file.c \
++		quirks.c
++
++include_HEADERS = portable.h \
++		dfu_load.h \
++		dfu_util.h \
++		dfuse.h \
+ 		dfu.h \
++		dfuse_mem.h \
+ 		usb_dfu.h \
+-		dfu_file.c \
+ 		dfu_file.h \
+-		quirks.c \
+ 		quirks.h
+ 
+-dfu_suffix_SOURCES = suffix.c \
+-		dfu_file.h \
+-		dfu_file.c
++# We won't be using dfu_suffix or prefix and they error out when built anyways
++bin_PROGRAMS = dfu-util # dfu-suffix dfu-prefix
++dfu_util_DEPENDENCIES = libdfu.la
++dfu_util_SOURCES = main.c
++dfu_util_LDADD = libdfu.la
+ 
+-dfu_prefix_SOURCES = prefix.c \
+-		dfu_file.h \
+-		dfu_file.c
++dfu_suffix_DEPENDENCIES = libdfu.la
++dfu_suffix_SOURCES = suffix.c
++dfu_suffix_LDADD = libdfu.la
++
++dfu_prefix_DEPENDENCIES = libdfu.la
++dfu_prefix_SOURCES = prefix.c
++dfu_prefix_LDADD = libdfu.la
+-- 
+1.9.1
+

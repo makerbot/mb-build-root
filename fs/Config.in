@@ -1,5 +1,12 @@
 menu "Filesystem images"
 
+config BR2_TARGET_ROOTFS_NULL
+	bool "build filesystem creation dependencies"
+	help
+	  This does not actually build a filesytem image, but creates
+	  several dependencies to make it easier for other scripts to
+	  create a filesystem image.
+
 source "fs/axfs/Config.in"
 source "fs/btrfs/Config.in"
 source "fs/cloop/Config.in"
