@@ -194,10 +194,24 @@ def install(path):
         install_tree(os.path.join(this_dir, "output/staging"),
                      os.path.join(path, "staging"), f)
 
+        # Needed things to package up the root filesystem
+        install_file(os.path.join(this_dir,
+            "output/build/buildroot-fs/full_devices_table.txt"),
+            os.path.join(path, "rootfs_util/full_devices_table.txt"), f)
+        install_file(os.path.join(this_dir, "output/host/bin/makedevs"),
+                     os.path.join(path, "rootfs_util/makedevs"), f)
+
+        install_file(
+            os.path.join(this_dir,
+                "output/build/buildroot-fs/full_users_table.txt"),
+            os.path.join(path, "rootfs_util/full_users_table.txt"), f)
+        install_file(os.path.join(this_dir, "support/scripts/mkusers"),
+                     os.path.join(path, "rootfs_util/mkusers"), f)
+
         # Install buildroot's version of mkfs.ext4 since the older version that
         # comes with ubuntu doesn't support populating the filesystem as it is
         # being made.
-        install_file(os.path.join(this_dir, "output/host/usr/sbin/mkfs.ext4"),
+        install_file(os.path.join(this_dir, "output/host/sbin/mkfs.ext4"),
                      os.path.join(path, "rootfs_util/mkfs.ext4"), f)
         # TODO(chris): Stop installing this script -- we should be using mkfs
         install_file(os.path.join(this_dir, "package/mke2img/mke2img"),
