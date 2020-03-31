@@ -201,12 +201,15 @@ def install(path):
         install_file(os.path.join(this_dir, "output/host/bin/makedevs"),
                      os.path.join(path, "rootfs_util/makedevs"), f)
 
-        install_file(
-            os.path.join(this_dir,
-                "output/build/buildroot-fs/full_users_table.txt"),
-            os.path.join(path, "rootfs_util/full_users_table.txt"), f)
-        install_file(os.path.join(this_dir, "support/scripts/mkusers"),
-                     os.path.join(path, "rootfs_util/mkusers"), f)
+        install_file(os.path.join(this_dir,
+            "output/build/buildroot-fs/tar/target/etc/passwd"),
+            os.path.join(path, "rootfs/etc/passwd"), f)
+        install_file(os.path.join(this_dir,
+            "output/build/buildroot-fs/tar/target/etc/shadow"),
+            os.path.join(path, "rootfs/etc/shadow"), f)
+        install_file(os.path.join(this_dir,
+            "output/build/buildroot-fs/tar/target/etc/group"),
+            os.path.join(path, "rootfs/etc/group"), f)
 
         # Install buildroot's version of mkfs.ext4 since the older version that
         # comes with ubuntu doesn't support populating the filesystem as it is
