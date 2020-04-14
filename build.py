@@ -10,7 +10,6 @@ import glob
 import br_utils
 
 # Set the build configuration here as <name>_defconfig
-config = 'mb_stardust_reva_defconfig'
 this_dir = os.path.realpath(os.path.dirname(__file__))
 g_qt5_core_install_prefix = ''
 
@@ -22,9 +21,9 @@ def find_containing_dir(name, path):
 def build(debug=False, num_cores=4):
     # Ensure we have a configuration to build
     br_utils.make_config(debug)
-
-    # Actually build
-    br_utils.run_cmd(['make', '-j', str(num_cores)])
+    # Buildroot supports only one recipe at a time (ie. -j must be 1).
+    # Individual packages may have jobs > 1 specified with BR2_JLEVEL.
+    br_utils.run_cmd(['make'])
 
 def install_tree(src_path, install_path, manifest_file):
     """
@@ -196,19 +195,27 @@ def install(path):
                      os.path.join(path, "staging"), f)
 
         # Needed things to package up the root filesystem
-        install_file(os.path.join(this_dir, "output/build/_device_table.txt"),
-                     os.path.join(path, "rootfs_util/_device_table.txt"), f)
-        install_file(os.path.join(this_dir, "output/host/usr/bin/makedevs"),
+        install_file(os.path.join(this_dir,
+            "output/build/buildroot-fs/full_devices_table.txt"),
+            os.path.join(path, "rootfs_util/full_devices_table.txt"), f)
+        install_file(os.path.join(this_dir, "output/host/bin/makedevs"),
                      os.path.join(path, "rootfs_util/makedevs"), f)
+
+        install_file(os.path.join(this_dir,
+            "output/build/buildroot-fs/tar/target/etc/passwd"),
+            os.path.join(path, "rootfs/etc/passwd"), f)
+        install_file(os.path.join(this_dir,
+            "output/build/buildroot-fs/tar/target/etc/shadow"),
+            os.path.join(path, "rootfs/etc/shadow"), f)
+        install_file(os.path.join(this_dir,
+            "output/build/buildroot-fs/tar/target/etc/group"),
+            os.path.join(path, "rootfs/etc/group"), f)
 
         # Install buildroot's version of mkfs.ext4 since the older version that
         # comes with ubuntu doesn't support populating the filesystem as it is
         # being made.
-        install_file(os.path.join(this_dir, "output/host/usr/sbin/mkfs.ext4"),
+        install_file(os.path.join(this_dir, "output/host/sbin/mkfs.ext4"),
                      os.path.join(path, "rootfs_util/mkfs.ext4"), f)
-        # TODO(chris): Stop installing this script -- we should be using mkfs
-        install_file(os.path.join(this_dir, "package/mke2img/mke2img"),
-                     os.path.join(path, "rootfs_util/mke2img"), f)
 
         # install host dfu-util stuff
         install_file(os.path.join(this_dir, "output/host/usr/lib/libdfu.so"),
