@@ -241,6 +241,11 @@ def install(path):
             install_path(os.path.join(host, host_path),
                          os.path.join(path, host_path), f)
 
+        os.symlink(os.path.join(path, "rootfs/usr/lib/python3.8"),
+                   os.path.join(path, "rootfs/usr/lib/python3.4"))
+        os.symlink(os.path.join(path, "rootfs/usr/lib/python3.8"),
+                   os.path.join(path, "rootfs/usr/lib/python3"))
+
 def clean():
     print("Removing output/")
     path = os.path.join(this_dir, 'output')
