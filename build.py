@@ -181,7 +181,23 @@ def patch_tree(path, old_prefix, new_prefix):
             ret.update(patch_paths(filepath, old_prefix, new_prefix))
     return ret
 
+def add_symlink(target, link_name, ignore_exists):
+    try:
+        os.symlink(target, link_name)
+    except FileExistsError:
+        if ignore_exists:
+            pass
+        else:
+            raise
+
 def install(path):
+    # Add the python symlinks here so the call to install_tree() below puts them
+    # in the Install/rootfs dir. The ignore exists is handy if you want to run
+    # make without cleaning.
+    add_symlink("python3.8",
+                os.path.join(this_dir, "output/target/usr/lib/python3.4"), True)
+    add_symlink("python3.8",
+                os.path.join(this_dir, "output/target/usr/lib/python3"), True)
     with open(os.path.join(this_dir, "install_manifest.txt"), 'w') as f:
         # Install the actual root filesystem to the location where
         # our bundling logic looks for the root filesystem
@@ -240,11 +256,6 @@ def install(path):
         for host_path in host_paths:
             install_path(os.path.join(host, host_path),
                          os.path.join(path, host_path), f)
-
-        os.symlink(os.path.join(path, "rootfs/usr/lib/python3.8"),
-                   os.path.join(path, "rootfs/usr/lib/python3.4"))
-        os.symlink(os.path.join(path, "rootfs/usr/lib/python3.8"),
-                   os.path.join(path, "rootfs/usr/lib/python3"))
 
 def clean():
     print("Removing output/")
