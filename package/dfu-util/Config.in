@@ -6,3 +6,4 @@ config BR2_PACKAGE_DFU_UTIL
 	  and upload firmware to devices connected over USB.
 
 	  http://dfu-util.sourceforge.net/
+	  

@@ -1,3 +1,6 @@
-# From http://sourceforge.net/projects/msmtp/files/msmtp/1.6.5/
-md5	50a8c9bb72f8222779db6b4aae2965e0	msmtp-1.6.5.tar.xz
-sha1	27d1fc609cd453a7e4c55c4ec55d455949bc53f1	msmtp-1.6.5.tar.xz
+# Locally calculated after checking signature
+# https://marlam.de/msmtp/releases/msmtp-1.8.6.tar.xz.sig
+sha256	6625f147430c65ba8527f52c4fe5d4d33552d3c0fb6d793ba7df819a3b3042e1	msmtp-1.8.6.tar.xz
+
+# Hash for license file:
+sha256	8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903	COPYING

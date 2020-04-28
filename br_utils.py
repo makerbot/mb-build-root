@@ -16,8 +16,6 @@ def set_install_dir(install_dir):
     config_override = {
         'BR2_TOOLCHAIN_EXTERNAL_PATH':
             os.path.join(install_dir, 'linaro-linux-gnu'),
-        'BR2_PACKAGE_BUSYBOX_CONFIG':
-            os.path.join(this_dir, 'busybox.mbconfig'),
     }
 
 # Set a sane default here so that we shouldn't have to worry about this
