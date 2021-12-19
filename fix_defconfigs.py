@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Cleans things up after you have been fucking around with the
 # defconfigs by hand (which why would you ever do now that we
