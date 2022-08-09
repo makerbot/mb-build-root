@@ -1,0 +1,31 @@
+diff --git a/Modules/_ssl.c b/Modules/_ssl.c
+index 43b236c212..dd8d3e2018 100644
+--- a/Modules/_ssl.c
++++ b/Modules/_ssl.c
+@@ -1665,7 +1665,9 @@ _decode_certificate(X509 *certificate) {
+     PyObject *version;
+     PyObject *sn_obj;
+     PyObject *obj;
++    PyObject *pubkey_obj;
+     ASN1_INTEGER *serialNumber;
++    const ASN1_BIT_STRING *pubkey;
+     char buf[2048];
+     int len, result;
+     ASN1_TIME *notBefore, *notAfter;
+@@ -1704,6 +1706,16 @@ _decode_certificate(X509 *certificate) {
+     }
+     Py_DECREF(version);
+ 
++    pubkey = X509_get0_pubkey_bitstr(certificate);
++    pubkey_obj = PyBytes_FromStringAndSize(pubkey->data, pubkey->length);
++    if (pubkey_obj == NULL)
++        goto fail0;
++    if (PyDict_SetItemString(retval, (const char *)"pubkey", pubkey_obj) < 0) {
++        Py_DECREF(pubkey_obj);
++        goto fail0;
++    }
++    Py_DECREF(pubkey_obj);
++
+     /* get a memory buffer */
+     biobuf = BIO_new(BIO_s_mem());
+     if (biobuf == NULL) {

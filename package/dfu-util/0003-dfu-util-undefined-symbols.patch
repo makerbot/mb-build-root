@@ -1,0 +1,148 @@
+commit 2f22d9a14fbfc31b5ec95f9b2d1238dd7820fd71
+Author: Shirley Du <shirley.du@makerbot.com>
+Date:   Mon Sep 25 11:11:32 2017 -0400
+
+    move definition of externed variables...
+    
+    and add function for reseting the static variables in dfuse.c...
+
+diff --git a/src/dfu_file.c b/src/dfu_file.c
+index 7c897d4..eb8b695 100644
+--- a/src/dfu_file.c
++++ b/src/dfu_file.c
+@@ -36,6 +36,8 @@
+ #define PROGRESS_BAR_WIDTH 25
+ #define STDIN_CHUNK_SIZE 65536
+ 
++int verbose = 0;
++
+ static const unsigned long crc32_table[] = {
+     0x00000000, 0x77073096, 0xee0e612c, 0x990951ba, 0x076dc419, 0x706af48f,
+     0xe963a535, 0x9e6495a3, 0x0edb8832, 0x79dcb8a4, 0xe0d5e91e, 0x97d2d988,
+diff --git a/src/dfu_util.c b/src/dfu_util.c
+index b94c7cc..8f7c332 100644
+--- a/src/dfu_util.c
++++ b/src/dfu_util.c
+@@ -41,6 +41,21 @@
+ #include <usbpath.h>
+ #endif
+ 
++struct dfu_if *dfu_root = NULL;
++
++int match_bus = -1;
++int match_device = -1;
++int match_vendor = -1;
++int match_product = -1;
++int match_vendor_dfu = -1;
++int match_product_dfu = -1;
++int match_config_index = -1;
++int match_iface_index = -1;
++int match_iface_alt_index = -1;
++const char *match_iface_alt_name = NULL;
++const char *match_serial = NULL;
++const char *match_serial_dfu = NULL;
++
+ /*
+  * Look for a descriptor in a concatenated descriptor list. Will
+  * return upon the first match of the given descriptor type. Returns length of
+diff --git a/src/dfu_util.h b/src/dfu_util.h
+index fc0c19d..8d2b0e2 100644
+--- a/src/dfu_util.h
++++ b/src/dfu_util.h
+@@ -15,6 +15,7 @@ enum mode {
+ };
+ 
+ extern struct dfu_if *dfu_root;
++
+ extern int match_bus;
+ extern int match_device;
+ extern int match_vendor;
+diff --git a/src/dfuse.c b/src/dfuse.c
+index fce29fe..67fdd24 100644
+--- a/src/dfuse.c
++++ b/src/dfuse.c
+@@ -46,6 +46,17 @@ static int dfuse_leave = 0;
+ static int dfuse_unprotect = 0;
+ static int dfuse_mass_erase = 0;
+ 
++void reset_dfuse_state() {
++  last_erased_page = 1;
++  mem_layout = NULL;
++  dfuse_address = 0;
++  dfuse_length = 0;
++  dfuse_force = 0;
++  dfuse_leave = 0;
++  dfuse_unprotect = 0;
++  dfuse_mass_erase = 0;
++}
++
+ unsigned int quad2uint(unsigned char *p)
+ {
+ 	return (*p + (*(p + 1) << 8) + (*(p + 2) << 16) + (*(p + 3) << 24));
+diff --git a/src/dfuse.h b/src/dfuse.h
+index ed1108c..f2d5ac5 100644
+--- a/src/dfuse.h
++++ b/src/dfuse.h
+@@ -25,6 +25,8 @@
+ 
+ enum dfuse_command { SET_ADDRESS, ERASE_PAGE, MASS_ERASE, READ_UNPROTECT };
+ 
++void reset_dfuse_state();
++
+ int dfuse_special_command(struct dfu_if *dif, unsigned int address,
+ 			  enum dfuse_command command);
+ int dfuse_do_upload(struct dfu_if *dif, int xfer_size, int fd,
+diff --git a/src/main.c b/src/main.c
+index acaed2f..d0d1a6e 100644
+--- a/src/main.c
++++ b/src/main.c
+@@ -44,23 +44,6 @@
+ #include <usbpath.h>
+ #endif
+ 
+-int verbose = 0;
+-
+-struct dfu_if *dfu_root = NULL;
+-
+-int match_bus = -1;
+-int match_device = -1;
+-int match_vendor = -1;
+-int match_product = -1;
+-int match_vendor_dfu = -1;
+-int match_product_dfu = -1;
+-int match_config_index = -1;
+-int match_iface_index = -1;
+-int match_iface_alt_index = -1;
+-const char *match_iface_alt_name = NULL;
+-const char *match_serial = NULL;
+-const char *match_serial_dfu = NULL;
+-
+ static int parse_match_value(const char *str, int default_value)
+ {
+ 	char *remainder;
+diff --git a/src/prefix.c b/src/prefix.c
+index be8e3fa..78fac48 100644
+--- a/src/prefix.c
++++ b/src/prefix.c
+@@ -36,8 +36,6 @@ enum mode {
+ 	MODE_CHECK
+ };
+ 
+-int verbose;
+-
+ static void help(void)
+ {
+ 	fprintf(stderr, "Usage: dfu-prefix [options] ...\n"
+diff --git a/src/suffix.c b/src/suffix.c
+index 0df248f..a9a3cd3 100644
+--- a/src/suffix.c
++++ b/src/suffix.c
+@@ -36,8 +36,6 @@ enum mode {
+ 	MODE_CHECK
+ };
+ 
+-int verbose;
+-
+ static void help(void)
+ {
+ 	fprintf(stderr, "Usage: dfu-suffix [options] ...\n"
