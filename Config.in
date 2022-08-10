@@ -382,7 +382,19 @@ config BR2_ENABLE_DEBUG
 	  binaries are stripped on the target is controlled by the
 	  BR2_STRIP_* options below.
 
-if BR2_ENABLE_DEBUG
+config BR2_ENABLE_DEBUG_SAFE
+	bool "Only add debugging symbols to packages"
+	help
+	  Build packages with debugging symbols enabled, but no other
+	  changes.  The normal debug flag does induce other changes in
+	  many packages, so attempting to use that flag in a remote debug
+	  setup where we retain debug symbols in the build process but
+	  strip them from all binaries running on the device will incur
+	  a performance penalty on the device.  This flag does not produce
+	  any changes other than debug symbols, so when stripping symbols
+	  on the device this will not change device behavior in any way.
+
+if BR2_ENABLE_DEBUG || BR2_ENABLE_DEBUG_SAFE
 choice
 	prompt "gcc debug level"
 	default BR2_DEBUG_2
