@@ -20,12 +20,6 @@ ifeq ($(BR2_m68k_cf),y)
 ROCKSDB_EXTRA_CXXFLAGS += -fno-defer-pop
 endif
 
-# Internal error, aborting at dwarf2cfi.c:2802 in connect_traces
-# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=58864
-ifeq ($(BR2_m68k_cf),y)
-ROCKSDB_EXTRA_CXXFLAGS += -fno-defer-pop
-endif
-
 ifeq ($(BR2_PACKAGE_BZIP2),y)
 ROCKSDB_DEPENDENCIES += bzip2
 ROCKSDB_MAKE_OPTS += ROCKSDB_DISABLE_BZ2=0

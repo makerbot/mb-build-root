@@ -28,9 +28,6 @@ WPA_SUPPLICANT_IGNORE_CVES += CVE-2021-27803
 # 0002-ASN.1-Validate-DigestAlgorithmIdentifier-parameters.patch
 WPA_SUPPLICANT_IGNORE_CVES += CVE-2021-30004
 
-# 0001-AP-Silently-ignore-management-frame-from-unexpected-.patch
-WPA_SUPPLICANT_IGNORE_CVES += CVE-2019-16275
-
 # install the wpa_client library
 WPA_SUPPLICANT_INSTALL_STAGING = YES
 
