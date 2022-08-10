@@ -1,4 +1,4 @@
-From c68234aba844cb1034fdcfb50aef03da454723f9 Mon Sep 17 00:00:00 2001
+From 1773ef327247ff2a6e7ce737637748b67c90419f Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Wed, 23 Dec 2015 11:51:58 +0100
 Subject: [PATCH] Add an option to disable the ossaudiodev module
@@ -9,12 +9,12 @@ Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
  1 file changed, 6 insertions(+)
 
 diff --git a/configure.ac b/configure.ac
-index e6255babb6..5809233aac 100644
+index 86fd03cdbb..7ba4ea8d5d 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -3021,6 +3021,12 @@ else
- fi
- AC_SUBST(MPDEC)
+@@ -3172,6 +3172,12 @@ fi
+ 
+ AC_MSG_RESULT($with_decimal_contextvar)
  
 +AC_ARG_ENABLE(ossaudiodev,
 +	AS_HELP_STRING([--disable-ossaudiodev], [disable OSSAUDIODEV]),

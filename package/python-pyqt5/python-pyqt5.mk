@@ -39,6 +39,12 @@ endif
 ifeq ($(BR2_PACKAGE_QT5BASE_TEST),y)
 PYTHON_PYQT5_MODULES += QtTest
 endif
+
+# QtSvg needs QtWidgets
+ifeq ($(BR2_PACKAGE_QT5SVG),y)
+PYTHON_PYQT5_DEPENDENCIES += qt5svg
+PYTHON_PYQT5_MODULES += QtSvg
+endif
 endif
 
 ifeq ($(BR2_PACKAGE_QT5CONNECTIVITY),y)
@@ -65,7 +71,10 @@ endif
 
 ifeq ($(BR2_PACKAGE_QT5LOCATION),y)
 PYTHON_PYQT5_DEPENDENCIES += qt5location
-PYTHON_PYQT5_MODULES += QtLocation QtPositioning
+PYTHON_PYQT5_MODULES += QtPositioning
+ifeq ($(BR2_PACKAGE_QT5DECLARATIVE_QUICK),y)
+PYTHON_PYQT5_MODULES += QtLocation
+endif
 endif
 
 ifeq ($(BR2_PACKAGE_QT5MULTIMEDIA),y)
@@ -83,11 +92,6 @@ endif
 ifeq ($(BR2_PACKAGE_QT5SERIALPORT),y)
 PYTHON_PYQT5_DEPENDENCIES += qt5serialport
 PYTHON_PYQT5_MODULES += QtSerialPort
-endif
-
-ifeq ($(BR2_PACKAGE_QT5SVG),y)
-PYTHON_PYQT5_DEPENDENCIES += qt5svg
-PYTHON_PYQT5_MODULES += QtSvg
 endif
 
 ifeq ($(BR2_PACKAGE_QT5WEBCHANNEL),y)
@@ -131,7 +135,7 @@ PYTHON_PYQT5_QTDETAIL_TYPE = shared
 # Turn off features that aren't available in current qt configuration
 PYTHON_PYQT5_QTDETAIL_DISABLE_FEATURES += $(if $(BR2_PACKAGE_QT5BASE_OPENGL),,PyQt_OpenGL)
 PYTHON_PYQT5_QTDETAIL_DISABLE_FEATURES += $(if $(BR2_PACKAGE_QT5BASE_OPENGL_DESKTOP),,PyQt_Desktop_OpenGL)
-PYTHON_PYQT5_QTDETAIL_DISABLE_FEATURES += $(if $(BR2_PACKAGE_QT5BASE_OPENSSL),,PyQt_SSL)
+PYTHON_PYQT5_QTDETAIL_DISABLE_FEATURES += $(if $(BR2_PACKAGE_OPENSSL),,PyQt_SSL)
 
 define PYTHON_PYQT5_QTDETAIL
 	echo $(1) >> $(2)/qtdetail.out
@@ -147,6 +151,11 @@ define PYTHON_PYQT5_GENERATE_QTDETAIL
 		$(call PYTHON_PYQT5_QTDETAIL,$(f),$(1)) \
 	)
 endef
+
+# The file "qt.conf" can be used to override the hard-coded paths that are
+# compiled into the Qt library. We need it to make "qmake" relocatable and
+# tweak the per-package install pathes
+PYTHON_PYQT5_PRE_CONFIGURE_HOOKS += QT5_QT_CONF_FIXUP
 
 PYTHON_PYQT5_CONF_OPTS = \
 	--bindir $(TARGET_DIR)/usr/bin \

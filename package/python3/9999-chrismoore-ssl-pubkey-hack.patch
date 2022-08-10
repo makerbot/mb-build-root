@@ -1,8 +1,8 @@
 diff --git a/Modules/_ssl.c b/Modules/_ssl.c
-index 43b236c212..dd8d3e2018 100644
+index 0498c153ca..f684d80805 100644
 --- a/Modules/_ssl.c
 +++ b/Modules/_ssl.c
-@@ -1665,7 +1665,9 @@ _decode_certificate(X509 *certificate) {
+@@ -1686,7 +1686,9 @@ _decode_certificate(X509 *certificate) {
      PyObject *version;
      PyObject *sn_obj;
      PyObject *obj;
@@ -11,8 +11,8 @@ index 43b236c212..dd8d3e2018 100644
 +    const ASN1_BIT_STRING *pubkey;
      char buf[2048];
      int len, result;
-     ASN1_TIME *notBefore, *notAfter;
-@@ -1704,6 +1706,16 @@ _decode_certificate(X509 *certificate) {
+     const ASN1_TIME *notBefore, *notAfter;
+@@ -1725,6 +1727,16 @@ _decode_certificate(X509 *certificate) {
      }
      Py_DECREF(version);
  
