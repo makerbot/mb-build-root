@@ -1,0 +1,80 @@
+This removes the small text from the default keyboard as it is unused
+(and really can't be used unless we have a tablet sized screen).  More
+importantly it changes the implemntation of key capitalization, so that
+instead of changing a font property, we just have two different static
+text items that we change the visibility on.
+diff --git a/src/virtualkeyboard/content/styles/default/style.qml b/src/virtualkeyboard/content/styles/default/style.qml
+--- a/src/virtualkeyboard/content/styles/default/style.qml
++++ b/src/virtualkeyboard/content/styles/default/style.qml
+@@ -71,22 +71,25 @@
+             anchors.fill: keyPanel
+             anchors.margins: keyBackgroundMargin
+             Text {
+-                id: keySmallText
+-                text: control.smallText
+-                visible: control.smallTextVisible
+-                color: "gray"
+-                anchors.right: parent.right
+-                anchors.top: parent.top
+-                anchors.margins: keyContentMargin / 3
++                id: keyText
++                text: control.displayText
++                color: "white"
++                horizontalAlignment: Text.AlignHCenter
++                verticalAlignment: Text.AlignVCenter
++                anchors.fill: parent
++                anchors.leftMargin: keyContentMargin
++                anchors.topMargin: keyContentMargin
++                anchors.rightMargin: keyContentMargin
++                anchors.bottomMargin: keyContentMargin
++                visible: !control.uppercased
+                 font {
+                     family: fontFamily
+                     weight: Font.Normal
+-                    pixelSize: 38 * scaleHint
+-                    capitalization: control.uppercased ? Font.AllUppercase : Font.MixedCase
++                    pixelSize: 52 * scaleHint
+                 }
+             }
+             Text {
+-                id: keyText
++                id: keyTextUpper
+                 text: control.displayText
+                 color: "white"
+                 horizontalAlignment: Text.AlignHCenter
+@@ -96,11 +99,12 @@
+                 anchors.topMargin: keyContentMargin
+                 anchors.rightMargin: keyContentMargin
+                 anchors.bottomMargin: keyContentMargin
++                visible: control.uppercased
+                 font {
+                     family: fontFamily
+                     weight: Font.Normal
+                     pixelSize: 52 * scaleHint
+-                    capitalization: control.uppercased ? Font.AllUppercase : Font.MixedCase
++                    capitalization: Font.AllUppercase
+                 }
+             }
+         }
+@@ -116,6 +120,10 @@
+                     target: keyText
+                     opacity: 0.5
+                 }
++                PropertyChanges {
++                    target: keyTextUpper
++                    opacity: 0.5
++                }
+             },
+             State {
+                 name: "disabled"
+@@ -128,6 +136,10 @@
+                     target: keyText
+                     opacity: 0.05
+                 }
++                PropertyChanges {
++                    target: keyTextUpper
++                    opacity: 0.05
++                }
+             }
+         ]
+     }
