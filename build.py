@@ -194,9 +194,9 @@ def install(path):
     # Add the python symlinks here so the call to install_tree() below puts them
     # in the Install/rootfs dir. The ignore exists is handy if you want to run
     # make without cleaning.
-    add_symlink("python3.8",
+    add_symlink("python3.9",
                 os.path.join(this_dir, "output/target/usr/lib/python3.4"), True)
-    add_symlink("python3.8",
+    add_symlink("python3.9",
                 os.path.join(this_dir, "output/target/usr/lib/python3"), True)
     with open(os.path.join(this_dir, "install_manifest.txt"), 'w') as f:
         # Install the actual root filesystem to the location where
