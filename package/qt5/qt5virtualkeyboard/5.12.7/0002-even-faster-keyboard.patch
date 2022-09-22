@@ -100,6 +100,99 @@ index 0000000000..42aab68fbf
 +        if (source.length > 0 && preloadSource !== source) other.source = source;
 +    }
 +}
+diff --git a/src/virtualkeyboard/content/layouts/fallback/symbols.qml b/src/virtualkeyboard/content/layouts/fallback/symbols.qml
+index 26d629515e..f31c7a4553 100644
+--- a/src/virtualkeyboard/content/layouts/fallback/symbols.qml
++++ b/src/virtualkeyboard/content/layouts/fallback/symbols.qml
+@@ -31,15 +31,11 @@ import QtQuick 2.0
+ import QtQuick.Layouts 1.0
+ import QtQuick.VirtualKeyboard 2.1
+ 
+-KeyboardLayoutLoader {
+-    property bool secondPage
+-    onVisibleChanged: if (!visible) secondPage = false
+-    sourceComponent: secondPage ? page2 : page1
+-    Component {
+-        id: page1
+-        KeyboardLayout {
++KeyboardLayout {
++            property bool secondPage
+             keyWeight: 160
+             KeyboardRow {
++                visible: !secondPage
+                 Key {
+                     key: Qt.Key_1
+                     text: "1"
+@@ -83,6 +79,7 @@ KeyboardLayoutLoader {
+                 BackspaceKey {}
+             }
+             KeyboardRow {
++                visible: !secondPage
+                 FillerKey {
+                     weight: 56
+                 }
+@@ -127,6 +124,7 @@ KeyboardLayoutLoader {
+                 }
+             }
+             KeyboardRow {
++                visible: !secondPage
+                 keyWeight: 156
+                 Key {
+                     displayText: "1/2"
+@@ -177,6 +175,7 @@ KeyboardLayoutLoader {
+                 }
+             }
+             KeyboardRow {
++                visible: !secondPage
+                 keyWeight: 154
+                 SymbolModeKey {
+                     weight: 217
+@@ -202,13 +201,8 @@ KeyboardLayoutLoader {
+                     weight: 204
+                 }
+             }
+-        }
+-    }
+-    Component {
+-        id: page2
+-        KeyboardLayout {
+-            keyWeight: 160
+             KeyboardRow {
++                visible: secondPage
+                 Key {
+                     key: Qt.Key_AsciiTilde
+                     text: "~"
+@@ -253,6 +247,7 @@ KeyboardLayoutLoader {
+                 BackspaceKey {}
+             }
+             KeyboardRow {
++                visible: secondPage
+                 FillerKey {
+                     weight: 56
+                 }
+@@ -297,6 +292,7 @@ KeyboardLayoutLoader {
+                 }
+             }
+             KeyboardRow {
++                visible: secondPage
+                 keyWeight: 156
+                 Key {
+                     displayText: "2/2"
+@@ -347,6 +343,7 @@ KeyboardLayoutLoader {
+                 }
+             }
+             KeyboardRow {
++                visible: secondPage
+                 keyWeight: 154
+                 SymbolModeKey {
+                     weight: 217
+@@ -371,6 +368,4 @@ KeyboardLayoutLoader {
+                     weight: 204
+                 }
+             }
+-        }
+-    }
+ }
 diff --git a/src/virtualkeyboard/content/virtualkeyboard_content.qrc b/src/virtualkeyboard/content/virtualkeyboard_content.qrc
 index 1e6392f44a..1526c10edc 100644
 --- a/src/virtualkeyboard/content/virtualkeyboard_content.qrc
