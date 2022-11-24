@@ -1,4 +1,5 @@
-# From http://archive.apache.org/dist/httpd/httpd-2.4.41.tar.bz2.sha256
-sha256 133d48298fe5315ae9366a0ec66282fa4040efa5d566174481077ade7d18ea40 httpd-2.4.41.tar.bz2
+# From https://downloads.apache.org/httpd/httpd-2.4.53.tar.bz2.{sha256,sha512}
+sha256  d0bbd1121a57b5f2a6ff92d7b96f8050c5a45d3f14db118f64979d525858db63  httpd-2.4.53.tar.bz2
+sha512  07ef59594251a30a864cc9cc9a58ab788c2d006cef85b728f29533243927c63cb063e0867f2a306f37324c3adb9cf7dcb2402f3516b05c2c6f32469d475dd756  httpd-2.4.53.tar.bz2
 # Locally computed
-sha256 c49c0819a726b70142621715dae3159c47b0349c2bc9db079070f28dadac0229 LICENSE
+sha256  47b8c2b6c3309282a99d4a3001575c790fead690cc14734628c4667d2bbffc43  LICENSE

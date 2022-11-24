@@ -1,4 +1,4 @@
-From 332373ca25f2dbe5473330666ec49143506a4dc0 Mon Sep 17 00:00:00 2001
+From 7dea1b79fbb905dd69862862f327cc0f25cd93c2 Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Wed, 22 Feb 2017 17:31:51 -0800
 Subject: [PATCH] Add an option to disable the curses module
@@ -8,25 +8,23 @@ Signed-off-by: Samuel Martin <s.martin49@gmail.com>
 [ Andrey Smirnov: ported to Python 3.6 ]
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 ---
- Makefile.pre.in | 7 +++++--
+ Makefile.pre.in | 5 ++++-
  configure.ac    | 9 +++++++++
- 2 files changed, 14 insertions(+), 2 deletions(-)
+ 2 files changed, 13 insertions(+), 1 deletion(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index 5d78419fd4..660c292765 100644
+index 4fcf8b5a96..2e45a41140 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -1336,8 +1336,7 @@ LIBSUBDIRS=	site-packages \
- 		turtledemo \
+@@ -1425,7 +1425,6 @@ LIBSUBDIRS=	site-packages \
  		multiprocessing multiprocessing/dummy \
  		unittest \
--		venv venv/scripts venv/scripts/common venv/scripts/posix \
--		curses
-+		venv venv/scripts venv/scripts/common venv/scripts/posix
+ 		venv venv/scripts venv/scripts/common venv/scripts/posix \
+-		curses \
+ 		zoneinfo
  
  TESTSUBDIRS=	test \
- 		test/audiodata \
-@@ -1413,6 +1412,10 @@ TESTSUBDIRS += tkinter/test tkinter/test/test_tkinter \
+@@ -1506,6 +1505,10 @@ TESTSUBDIRS += tkinter/test tkinter/test/test_tkinter \
  	tkinter/test/test_ttk
  endif
  
@@ -38,10 +36,10 @@ index 5d78419fd4..660c292765 100644
  LIBSUBDIRS += lib2to3 lib2to3/fixes lib2to3/pgen2
  TESTSUBDIRS += lib2to3/tests			\
 diff --git a/configure.ac b/configure.ac
-index b5922451cc..ea422a86a9 100644
+index a4d06dcb50..f034cd4bcb 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -3231,6 +3231,15 @@ if test "$TK" = "no"; then
+@@ -3383,6 +3383,15 @@ if test "$TK" = "no"; then
     DISABLED_EXTENSIONS="${DISABLED_EXTENSIONS} _tkinter"
  fi
  

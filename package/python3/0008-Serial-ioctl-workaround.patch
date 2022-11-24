@@ -1,4 +1,4 @@
-From 91e8058cf9085795db64f43e2c9548926ea46ab0 Mon Sep 17 00:00:00 2001
+From 0b62a3634d343e4e3be6541d298d58eb81cf1458 Mon Sep 17 00:00:00 2001
 From: Baruch Siach <baruch@tkos.co.il>
 Date: Wed, 23 Dec 2015 11:44:02 +0100
 Subject: [PATCH] Serial ioctl() workaround
@@ -15,7 +15,7 @@ Signed-off-by: Baruch Siach <baruch@tkos.co.il>
  1 file changed, 2 insertions(+)
 
 diff --git a/Modules/termios.c b/Modules/termios.c
-index aee7f12c57..ba2ff77d06 100644
+index 75e5e52320..eefbddfe69 100644
 --- a/Modules/termios.c
 +++ b/Modules/termios.c
 @@ -15,7 +15,9 @@
